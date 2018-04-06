@@ -1,0 +1,22 @@
+<RCC>
+    <qresource prefix="/">
+        <file>assets/images/action-types/applications.png</file>
+        <file>assets/images/action-types/terminal.png</file>
+        <file>assets/images/group-icons/512Blue.png</file>
+        <file>assets/images/group-icons/512Bronze.png</file>
+        <file>assets/images/group-icons/512Gold.png</file>
+        <file>assets/images/group-icons/512Green.png</file>
+        <file>assets/images/group-icons/512Ivory.png</file>
+        <file>assets/images/group-icons/512Orange.png</file>
+        <file>assets/images/group-icons/512Purple.png</file>
+        <file>assets/images/group-icons/512Red.png</file>
+        <file>assets/images/group-icons/512Silver.png</file>
+        <file>assets/images/app-actions/add.png</file>
+        <file>assets/images/app-actions/delete.png</file>
+        <file>assets/images/app-actions/configure.png</file>
+        <file>assets/images/app-actions/quit.png</file>
+        <file>assets/images/app-actions/configure-action-groups.png</file>
+        <file>assets/images/action-types/link.png</file>
+        <file>assets/images/app-icon.png</file>
+    </qresource>
+</RCC>
