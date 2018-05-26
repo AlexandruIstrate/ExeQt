@@ -41,6 +41,8 @@ private slots:
     void onAdd();
     void onRemove();
     void onEdit();
+
+    void onDoubleClick();
 };
 
 #endif // GROUPCONFIGURE_H

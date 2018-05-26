@@ -11,33 +11,36 @@ class LinkAction;
 
 class LinkAction : public Action
 {
-    Q_OBJECT
+	Q_OBJECT
 
 private:
-    Ui::LinkAction* ui;
+	Ui::LinkAction* ui;
 
-    QString m_Link;
+	QString m_Link;
 
 public:
-    LinkAction(const QString& link, const QString& name = QString(), QWidget* parent = nullptr);
-    LinkAction(const QString& name = QString(), QWidget* parent = nullptr);
-    ~LinkAction();
+	LinkAction(const QString& link, const QString& name = QString(), QWidget* parent = nullptr);
+	LinkAction(const QString& name = QString(), QWidget* parent = nullptr);
+	~LinkAction();
 
-    QString getTagName() const override;
+	QString getTagName() const override;
 
-    void readProperties(Bundle&) override;
-    void writeProperties(Bundle&) override;
+	bool checkBundle(const Bundle&) const override;
 
-    void execute() override;
+	void readProperties(Bundle&) override;
+	void writeProperties(Bundle&) override;
+
+	void execute() override;
+	bool validate() override;
 
 private:
-    void setupSignalsAndSlots();
+	void setupSignalsAndSlots();
 
 protected:
-    void initBundle() override;
+	void initBundle() override;
 
 private slots:
-    void onTextChanged(QString);
+	void onTextChanged(QString);
 };
 
 #endif // LINKACTION_H

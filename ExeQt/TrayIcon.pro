@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml
+QT       += core gui xml network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -37,7 +37,15 @@ SOURCES += \
     saveable.cpp \
     groupconfigure.cpp \
     linkaction.cpp \
-    bundle.cpp
+    bundle.cpp \
+    logindialog.cpp \
+    requestmanager.cpp \
+    mainpage.cpp \
+    authmanager.cpp \
+    constants.cpp \
+    stylemanager.cpp \
+    singleinstanceapplication.cpp \
+    settingsdialog.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -53,7 +61,15 @@ HEADERS += \
     groupconfigure.h \
     linkaction.h \
     bundle.h \
-    appicon.h
+    appicon.h \
+    logindialog.h \
+    requestmanager.h \
+    mainpage.h \
+    constants.h \
+    authmanager.h \
+    stylemanager.h \
+    singleinstanceapplication.h \
+    settingsdialog.h
 
 FORMS += \
         mainwidget.ui \
@@ -64,16 +80,15 @@ FORMS += \
     addgroupdialog.ui \
     applicationaction.ui \
     groupconfigure.ui \
-    linkaction.ui
+    linkaction.ui \
+    logindialog.ui \
+    mainpage.ui \
+    settingsdialog.ui
 
 RESOURCES += \
     resources.qrc
 
-#unix:!macx: LIBS += -L$$PWD/libs/singleapplication/lib/ -lQt5Solutions_SingleApplication-head
+#include($$PWD/libs/singleapplication/src/qtsingleapplication.pri)
 
-#include(/data/Libraries/qt-solutions-master/qtsingleapplication/src/qtsingleapplication.pri)
-
-#INCLUDEPATH += $$PWD/libs/singleapplication/include
-#DEPENDPATH += $$PWD/libs/singleapplication/include
-
-include($$PWD/libs/singleapplication/src/qtsingleapplication.pri)
+DISTFILES += \
+    style.qss
