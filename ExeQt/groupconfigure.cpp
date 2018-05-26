@@ -39,6 +39,8 @@ void GroupConfigure::setupSignalsAndSlots()
     connect(ui->btnAdd, SIGNAL(clicked()), m_ActionAdd, SLOT(trigger()));
     connect(ui->btnRemove, SIGNAL(clicked()), m_ActionRemove, SLOT(trigger()));
     connect(ui->btnEdit, SIGNAL(clicked()), m_ActionEdit, SLOT(trigger()));
+
+    connect(ui->lstGroups, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onDoubleClick()));
 }
 
 void GroupConfigure::setupUI()
@@ -87,4 +89,9 @@ void GroupConfigure::onEdit()
     addDialog->deleteLater();
 
     showActionGroups();
+}
+
+void GroupConfigure::onDoubleClick()
+{
+    m_ActionEdit->trigger();
 }

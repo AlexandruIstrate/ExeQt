@@ -8,7 +8,7 @@
 const QVector<QString> AddGroupDialog::s_IconNames { "Blue", "Bronze", "Gold", "Green", "Ivory", "Orange", "Purple", "Red", "Silver" };
 QVector<QIcon> AddGroupDialog::s_Icons;
 
-AddGroupDialog::AddGroupDialog(QWidget *parent) :
+AddGroupDialog::AddGroupDialog(QWidget* parent) :
     QDialog(parent),
     ui(new Ui::AddGroupDialog)
 {
@@ -16,20 +16,16 @@ AddGroupDialog::AddGroupDialog(QWidget *parent) :
     initUI();
 }
 
-AddGroupDialog::AddGroupDialog(ActionTab* tab) :
-    QDialog(tab),
-    ui(new Ui::AddGroupDialog)
+AddGroupDialog::AddGroupDialog(ActionTab* tab) : AddGroupDialog { (QWidget*) tab }
 {
-    ui->setupUi(this);
-    initUI();
-
     ui->edtName->setText(tab->getName());
+    ui->cmbIcon->setCurrentText(tab->getIcon().name);
 
-    if (exec() == -1)
-        return;
-
-    tab->setName(m_Name);
-    tab->setIcon(getIcon());
+    if (exec() != QDialog::DialogCode::Rejected)
+    {
+        tab->setName(m_Name);
+        tab->setIcon(getIcon());
+    }
 }
 
 AddGroupDialog::~AddGroupDialog()

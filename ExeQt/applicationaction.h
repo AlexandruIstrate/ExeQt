@@ -7,41 +7,46 @@
 #include "action.h"
 
 namespace Ui {
-    class ApplicationAction;
+	class ApplicationAction;
 }
 
 class ApplicationAction : public Action
 {
-    Q_OBJECT
+	Q_OBJECT
 
 private:
-    Ui::ApplicationAction* ui;
+	Ui::ApplicationAction* ui;
 
-    QString m_AppPath;
+	QString m_AppPath;
 
 public:
-    ApplicationAction(const QString& appPath, const QString& name = "", QWidget* parent = nullptr);
-    ApplicationAction(const QString& name = "", QWidget* parent = nullptr);
-    ~ApplicationAction();
+	ApplicationAction(const QString& appPath, const QString& name = QString(), QWidget* parent = nullptr);
+	ApplicationAction(const QString& name = QString(), QWidget* parent = nullptr);
+	~ApplicationAction();
 
-    inline const QString& getAppPath() const { return m_AppPath; }
+	inline const QString& getAppPath() const { return m_AppPath; }
 
-    QString getTagName() const override;
+	QString getTagName() const override;
 
-    void readProperties(Bundle&) override;
-    void writeProperties(Bundle&) override;
+	bool checkBundle(const Bundle&) const override;
 
-    void execute() override;
+	void readProperties(Bundle&) override;
+	void writeProperties(Bundle&) override;
+
+	void execute() override;
+	bool validate() override;
 
 private:
-    void setupSignalsAndSlots();
+	void setupSignalsAndSlots();
 
 protected:
-    void initBundle() override;
+	void initBundle() override;
 
 private slots:
-    void onTextChanged(QString);
-    void onBrowse();
+	void onTextChanged(QString);
+	void onBrowse();
+
+	void onProcessError(QProcess::ProcessError);
 };
 
 #endif // APPLICATIONACTION_H

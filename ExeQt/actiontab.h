@@ -55,6 +55,8 @@ public:
     void readProperties(Bundle&) override;
     void writeProperties(Bundle&) override;
 
+    void removeTrayIcon();
+
 private:
     void setupActions();
     void setupSignalsAndSlots();

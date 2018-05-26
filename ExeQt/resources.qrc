@@ -18,5 +18,8 @@
         <file>assets/images/app-actions/configure-action-groups.png</file>
         <file>assets/images/action-types/link.png</file>
         <file>assets/images/app-icon.png</file>
+        <file>assets/images/app-actions/cloud-connect.png</file>
+        <file>style.qss</file>
+        <file>assets/images/app-actions/settings.png</file>
     </qresource>
 </RCC>

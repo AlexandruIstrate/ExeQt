@@ -1,29 +1,50 @@
 #include "mainwidget.h"
 
+#include <QDebug>
 #include <QApplication>
 #include <QMessageBox>
 
-#include <qtsingleapplication.h>
+#include "mainpage.h"
+#include "authmanager.h"
+#include "stylemanager.h"
+#include "singleinstanceapplication.h"
+
+#define WAKE_MESSAGE "Are you running, sweetheart?"
+
+#define STYLE_FILE ":/style.qss"
+
+static void onInstanceRunning()
+{
+	QMessageBox msgBox;
+	msgBox.setIcon(QMessageBox::Warning);
+	msgBox.setText("The application is already running.\n"
+				   "Allowed to run only one instance of the application.");
+	msgBox.exec();
+}
 
 int main(int argc, char* argv[])
 {
-    try
-    {
-        QtSingleApplication instance(argc, argv);
-        instance.setQuitOnLastWindowClosed(false);
+	try
+	{
+		AuthManager::init();
 
-        if (instance.sendMessage("Are you running, sweetheart?"))
-            return 0;
+		StyleManager::init();
+		StyleManager::instance()->setStyleFile(STYLE_FILE);
 
-        MainWidget w;
-        instance.setActivationWindow(&w);
+		SingleInstanceApplication sng(argc, argv);
+		sng.setOnInstanceRunning(onInstanceRunning);
 
-        return instance.exec();
-    }
-    catch (const std::exception& e)
-    {
-        QMessageBox::critical(nullptr, QObject::tr("Fatal Error"), QObject::tr("The application encountered an error from which it could not recover!\n") + QString(e.what()));
-    }
+		MainPage mp;
+		int result = sng.exec(&mp);
 
-    return -1;
+		AuthManager::terminate();
+		StyleManager::terminate();
+
+		return result;
+	}
+	catch (const std::exception& e)
+	{
+		QMessageBox::critical(nullptr, QObject::tr("Fatal Error"), QObject::tr("The application encountered an error from which it could not recover!\n") + QString(e.what()));
+		return -1;
+	}
 }

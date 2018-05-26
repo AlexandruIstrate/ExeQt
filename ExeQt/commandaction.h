@@ -7,40 +7,43 @@
 #include "action.h"
 
 namespace Ui {
-    class CommandAction;
+	class CommandAction;
 }
 
 class CommandAction : public Action
 {
-    Q_OBJECT
+	Q_OBJECT
 
 private:
-    Ui::CommandAction* ui;
+	Ui::CommandAction* ui;
 
-    QString m_Command;
+	QString m_Command;
 
 public:
-    CommandAction(const QString& command, const QString& name = "", QWidget* parent = nullptr);
-    CommandAction(const QString& name = "", QWidget* parent = nullptr);
-    ~CommandAction();
+	CommandAction(const QString& command, const QString& name = "", QWidget* parent = nullptr);
+	CommandAction(const QString& name = "", QWidget* parent = nullptr);
+	~CommandAction();
 
-    inline const QString& getCommand() const { return m_Command; }
+	inline const QString& getCommand() const { return m_Command; }
 
-    QString getTagName() const override;
+	QString getTagName() const override;
 
-    void readProperties(Bundle&) override;
-    void writeProperties(Bundle&) override;
+	bool checkBundle(const Bundle&) const override;
 
-    void execute() override;
+	void readProperties(Bundle&) override;
+	void writeProperties(Bundle&) override;
+
+	void execute() override;
+	bool validate() override;
 
 private:
-    void setupSignalsAndSlots();
+	void setupSignalsAndSlots();
 
 protected:
-    void initBundle() override;
+	void initBundle() override;
 
 private slots:
-    void onEdit(QString);
+	void onEdit(QString);
 };
 
 #endif // COMMANDACTION_H

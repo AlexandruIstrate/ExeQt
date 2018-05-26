@@ -1,345 +1,391 @@
 #include "mainwidget.h"
 
 #include <QDebug>
-#include <QMenu>
-#include <QImage>
-#include <QCloseEvent>
-#include <QDesktopWidget>
-#include <QMessageBox>
 #include <QStringLiteral>
 #include <QDomDocument>
+#include <QThread>
+
+#include <QMenu>
+#include <QImage>
+#include <QMessageBox>
+#include <QCloseEvent>
+#include <QDesktopWidget>
+
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include "ui_mainwidget.h"
 #include "addtab.h"
 #include "addgroupdialog.h"
 #include "groupconfigure.h"
 #include "addgroupdialog.h"
+#include "authmanager.h"
+#include "logindialog.h"
+#include "settingsdialog.h"
+#include "stylemanager.h"
 
-#define ACTION_TAB_COUNT_PROPERTY   "actionTabCount"
+#include "constants.h"
 
 MainWidget::MainWidget(QWidget* parent) :
-    QWidget(parent), ui(new Ui::MainWidget)
+	QWidget(parent), ui(new Ui::MainWidget),
+	m_ShouldQuit { false }
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
+	setStyleSheet(StyleManager::instance()->getStyle());
 
-    setupActions();
-    setupUI();
-    setupSignalsAndSlots();
+	setupNetwork();
+	setupActions();
+	setupUI();
+	setupSignalsAndSlots();
 
-    loadFromFile();
+	loadFromFile();
 }
 
 MainWidget::~MainWidget()
 {
-    saveToFile();
-    delete ui;
+	delete ui;
 }
 
 QIcon MainWidget::getTabIcon(int index)
 {
-    return m_ActionTabs.at(index)->getIcon().icon;
+	return m_ActionTabs.at(index)->getIcon().icon;
 }
 
 void MainWidget::addNewActionGroup()
 {
-    AddGroupDialog* addDialog = new AddGroupDialog(this);
-    if (!addDialog->exec())
-        return;
+	AddGroupDialog* addDialog = new AddGroupDialog(this);
+	if (addDialog->exec() == QDialog::DialogCode::Rejected)
+		return;
 
-    ActionTab* newTab = new ActionTab(addDialog->getName(), addDialog->getIcon(), this);
-    addTab(newTab);
+	ActionTab* newTab = new ActionTab(addDialog->getName(), addDialog->getIcon(), this);
+	addTab(newTab);
 
-    ui->tabGroup->setCurrentWidget(newTab);
-    ui->tabGroup->setTabEnabled(getTabCount() - 1, false);
+	ui->tabGroup->setCurrentWidget(newTab);
+	ui->tabGroup->setTabEnabled(getTabCount() - 1, false);
 }
 
 void MainWidget::removeActionGroup(int index)
 {
-    ui->tabGroup->widget(index)->deleteLater();
-    ui->tabGroup->removeTab(index);
-    m_ActionTabs.erase(m_ActionTabs.begin() + index);
+	ui->tabGroup->widget(index)->deleteLater();
+	ui->tabGroup->removeTab(index);
 
-    ui->tabGroup->setCurrentIndex(getSelectedTabIndex() - 1);
+	m_ActionTabs[index]->removeTrayIcon();
+	m_ActionTabs.erase(m_ActionTabs.begin() + index);
 
-    if (getTabCount() == 1)
-        ui->tabGroup->setTabEnabled(getTabCount() - 1, true);
+	ui->tabGroup->setCurrentIndex(getSelectedTabIndex() - 1);
+
+	if (getTabCount() == 1)
+		ui->tabGroup->setTabEnabled(getTabCount() - 1, true);
 }
 
 QString MainWidget::getTagName() const
 {
-    return QString("mainWidget");
+	return QString("mainWidget");
 }
 
 bool MainWidget::checkBundle(const Bundle& bundle) const
 {
-    if (!checkProperty(bundle, ACTION_TAB_COUNT_PROPERTY))
-        return false;
-
-    return true;
+	return true;
 }
 
 void MainWidget::readProperties(Bundle& bundle)
 {
-    if (!checkBundle(bundle))
-        return;
+	if (!checkBundle(bundle))
+		return;
 
-    int actionTabCount = bundle.get(ACTION_TAB_COUNT_PROPERTY).toInt();
+	for (int i = 0; i < bundle.getChildrenCount(); ++i)
+	{
+		ActionTab* tab = new ActionTab("", AppIcon(), this);
+		tab->readProperties(bundle.childAt(i));
+		addTab(tab);
+	}
 
-    for (int i = 0; i < bundle.getChildrenCount(); ++i)
-        bundle.childAt(i).getName();
-
-    for (int i = 0; i < actionTabCount; ++i)
-    {
-        ActionTab* tab = new ActionTab("", AppIcon(), this);
-        tab->readProperties(bundle.childAt(i));
-        addTab(tab);
-    }
+	m_TrayIcon->showMessage(tr("Ready to Go"), tr("Loaded %1 groups!").arg(bundle.getChildrenCount()));
 }
 
 void MainWidget::writeProperties(Bundle& bundle)
 {
-    bundle.add(ACTION_TAB_COUNT_PROPERTY, QString::number(m_ActionTabs.size()));
-    for (ActionTab* tab : m_ActionTabs)
-    {
-        Bundle child(tab->getTagName());
-        tab->writeProperties(child);
+	for (ActionTab* tab : m_ActionTabs)
+	{
+		Bundle child(tab->getTagName());
+		tab->writeProperties(child);
 
-        bundle.addChild(child);
-    }
+		bundle.addChild(child);
+	}
 }
 
 void MainWidget::closeEvent(QCloseEvent* event)
 {
-    hide();
-    event->ignore();
+	hide();
+	event->ignore();
+}
+
+void MainWidget::setupNetwork()
+{
+	m_RequestManager = new RequestManager();
+	connect(m_RequestManager, SIGNAL(requestFinished(QNetworkReply*, bool)), this, SLOT(onRequestFinished(QNetworkReply*, bool)));
 }
 
 void MainWidget::setupActions()
 {
-    m_AddTabAction = new QAction(QIcon(":/assets/images/app-actions/add.png"), tr("Add Group"), this);
-    connect(m_AddTabAction, SIGNAL(triggered()), this, SLOT(onAddTab()));
+	m_AddTabAction = new QAction(QIcon(":/assets/images/app-actions/add.png"), tr("Add Group"), this);
+	connect(m_AddTabAction, SIGNAL(triggered()), this, SLOT(onAddTab()));
 
-    m_RemoveTabAction = new QAction(QIcon(":/assets/images/app-actions/delete.png"), tr("Remove Group"), this);
-    connect(m_RemoveTabAction, SIGNAL(triggered()), this, SLOT(onRemoveTab()));
+	m_RemoveTabAction = new QAction(QIcon(":/assets/images/app-actions/delete.png"), tr("Remove Group"), this);
+	connect(m_RemoveTabAction, SIGNAL(triggered()), this, SLOT(onRemoveTab()));
 
-    m_ConfigureAction = new QAction(QIcon(":/assets/images/app-actions/configure.png"), tr("Configure..."), this);
-    connect(m_ConfigureAction, SIGNAL(triggered()), SLOT(onConfigure()));
+	m_ConfigureAction = new QAction(QIcon(":/assets/images/app-actions/configure.png"), tr("Configure..."), this);
+	connect(m_ConfigureAction, SIGNAL(triggered()), SLOT(onConfigure()));
 
-    m_ConfigureGroupsAction = new QAction(QIcon(":/assets/images/app-actions/configure-action-groups.png"), tr("Configure Groups..."), this);
-    connect(m_ConfigureGroupsAction, SIGNAL(triggered()), this, SLOT(onConfigureActionGroups()));
+	m_ConfigureGroupsAction = new QAction(QIcon(":/assets/images/app-actions/configure-action-groups.png"), tr("Configure Groups..."), this);
+	connect(m_ConfigureGroupsAction, SIGNAL(triggered()), this, SLOT(onConfigureActionGroups()));
 
-    m_QuitAction = new QAction(QIcon(":/assets/images/app-actions/quit.png"), tr("Quit"), this);
-    connect(m_QuitAction, SIGNAL(triggered()), this, SLOT(onQuit()));
+	m_SyncAction = new QAction(QIcon(":/assets/images/app-actions/cloud-connect.png"), tr("Sync..."), this);
+	connect(m_SyncAction, SIGNAL(triggered()), this, SLOT(onSyncSelected()));
+
+	m_SettingsAction = new QAction(QIcon(":/assets/images/app-actions/settings.png"), tr("Settings..."), this);
+	connect(m_SettingsAction, SIGNAL(triggered()), this, SLOT(onSettingsSelected()));
+
+	m_QuitAction = new QAction(QIcon(":/assets/images/app-actions/quit.png"), tr("Quit"), this);
+	connect(m_QuitAction, SIGNAL(triggered()), this, SLOT(onQuit()));
 }
 
 void MainWidget::setupSignalsAndSlots()
 {
-    connect(m_TrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onIconActivated(QSystemTrayIcon::ActivationReason)));
-    connect(ui->tabGroup, SIGNAL(tabBarClicked(int)), this, SLOT(onTabSelected(int)));
+	connect(m_TrayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(onIconActivated(QSystemTrayIcon::ActivationReason)));
+	connect(ui->tabGroup, SIGNAL(tabBarClicked(int)), this, SLOT(onTabSelected(int)));
 
-    connect(ui->btnGroupConfigure, SIGNAL(clicked()), m_ConfigureGroupsAction, SLOT(trigger()));
+	connect(ui->btnGroupConfigure, SIGNAL(clicked()), m_ConfigureGroupsAction, SLOT(trigger()));
 }
 
 void MainWidget::setupUI()
 {
-    setupTrayIcon();
-    setupTabs();
-    AddGroupDialog::initIcons();
+	setupTrayIcon();
+	setupTabs();
+	AddGroupDialog::initIcons();
 
-    setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), qApp->desktop()->availableGeometry()));
+	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), qApp->desktop()->availableGeometry()));
 }
 
 void MainWidget::setupTrayIcon()
 {
-    QMenu* trayMenu = new QMenu(this);
-    trayMenu->addAction(m_AddTabAction);
-    trayMenu->addAction(m_RemoveTabAction);
-    trayMenu->addAction(m_ConfigureAction);
-    trayMenu->addAction(m_ConfigureGroupsAction);
-    trayMenu->addSeparator();
-    trayMenu->addAction(m_QuitAction);
+	QMenu* trayMenu = new QMenu(this);
+	trayMenu->addAction(m_AddTabAction);
+	trayMenu->addAction(m_RemoveTabAction);
+	trayMenu->addAction(m_ConfigureAction);
+	trayMenu->addAction(m_ConfigureGroupsAction);
+	trayMenu->addAction(m_SyncAction);
+	trayMenu->addAction(m_SettingsAction);
+	trayMenu->addSeparator();
+	trayMenu->addAction(m_QuitAction);
 
-    m_TrayIcon = new QSystemTrayIcon(this);
-    m_TrayIcon->setContextMenu(trayMenu);
-    m_TrayIcon->setIcon(QIcon(":/assets/images/app-icon.png"));
-    m_TrayIcon->show();
+	m_TrayIcon = new QSystemTrayIcon(this);
+	m_TrayIcon->setContextMenu(trayMenu);
+	m_TrayIcon->setIcon(QIcon(":/assets/images/app-icon.png"));
+	m_TrayIcon->show();
 }
 
 void MainWidget::setupTabs()
 {
-    AddTab* addTab = new AddTab(this);
-    ui->tabGroup->setTabEnabled(ui->tabGroup->indexOf(addTab), false);
-    ui->tabGroup->addTab(addTab, "+");
-    connect(addTab, SIGNAL(createActionGroup()), m_AddTabAction, SLOT(trigger()));
+	AddTab* addTab = new AddTab(this);
+	ui->tabGroup->setTabEnabled(ui->tabGroup->indexOf(addTab), false);
+	ui->tabGroup->addTab(addTab, "+");
+	connect(addTab, SIGNAL(createActionGroup()), m_AddTabAction, SLOT(trigger()));
 }
 
 void MainWidget::insertTab(ActionTab* tab)
 {
-    ui->tabGroup->insertTab(getTabCount() - 1, tab, tab->getIcon().icon, tab->getName());
-    ui->tabGroup->setTabEnabled(getTabCount() - 1, false);
+	ui->tabGroup->insertTab(getTabCount() - 1, tab, tab->getIcon().icon, tab->getName());
+	ui->tabGroup->setTabEnabled(getTabCount() - 1, false);
 }
 
 void MainWidget::addTab(ActionTab* tab)
 {
-    insertTab(tab);
-    m_ActionTabs.push_back(tab);
+	insertTab(tab);
+	m_ActionTabs.push_back(tab);
+}
+
+void MainWidget::removeTab(ActionTab* tab)
+{
+	m_ActionTabs.removeOne(tab);
+	tab->deleteLater();
 }
 
 void MainWidget::openGroupConfigureMenu()
 {
-    GroupConfigure* conf = new GroupConfigure(this);
-    conf->exec();
+	GroupConfigure* conf = new GroupConfigure(this);
+	conf->exec();
 
-    reloadTabs();
+	reloadTabs();
 }
 
 void MainWidget::reloadTabs()
 {
-    int selectedTab = getSelectedTabIndex();
+	while (getTabCount() > 1)
+		ui->tabGroup->removeTab(0);
 
-    for (int i = 0; getTabCount() > 1; ++i)
-        ui->tabGroup->removeTab(i);
+	for (ActionTab* tab : m_ActionTabs)
+		insertTab(tab);
 
-    for (ActionTab* tab : m_ActionTabs)
-        insertTab(tab);
+	int selectedTab = getSelectedTabIndex();
+	ui->tabGroup->setCurrentIndex(selectedTab < getTabCount() ? selectedTab : getTabCount() - 1);
+}
 
-    ui->tabGroup->setCurrentIndex(selectedTab < getTabCount() ? selectedTab : getTabCount() - 1);
+void MainWidget::removeTabs()
+{
+	for (ActionTab* tab : m_ActionTabs)
+		removeTab(tab);
+
+	ui->tabGroup->clear();
 }
 
 void MainWidget::saveToFile()
 {
-    QString str;
+	Bundle bundle(getTagName());
+	writeProperties(bundle);
 
-    QXmlStreamWriter writer(&str);
-    writer.setAutoFormatting(true);
-    writer.writeStartDocument();
-    writer.writeStartElement(getTagName());
-
-    Bundle bundle(getTagName());
-    writeProperties(bundle);
-    writeBundle(bundle, writer);
-
-    writer.writeEndDocument();
-
-    Saveable::writeToFile(m_SaveFile, str);
+	QString str = bundle.toXml();
+	Saveable::writeToFile(m_SaveFile, str);
 }
 
 void MainWidget::loadFromFile()
 {
-    QString str;
-    Saveable::readFromFile(m_SaveFile, str);
+	QString str;
+	Saveable::readFromFile(m_SaveFile, str);
 
-    Bundle bundle(getTagName());
-    readBundle(bundle, str);
-    readProperties(bundle);
+	Bundle bundle = Bundle::fromXml(str);
+	readProperties(bundle);
 }
 
 int MainWidget::getTabCount()
 {
-    return ui->tabGroup->count();
+	return ui->tabGroup->count();
 }
 
 int MainWidget::getSelectedTabIndex()
 {
-    return ui->tabGroup->currentIndex();
+	return ui->tabGroup->currentIndex();
 }
 
-void MainWidget::writeBundle(Bundle bundle, QXmlStreamWriter& writer)
+QString MainWidget::parseResponse(const QString& jsonText)
 {
-    QMap<QString, QString> map = bundle.getValues();
-    for (QMap<QString, QString>::const_iterator i = map.constBegin(); i != map.constEnd(); ++i)
-        writer.writeAttribute(i.key(), i.value());
+	QJsonDocument doc(QJsonDocument::fromJson(jsonText.toUtf8()));
 
-    for (int i = 0; i < bundle.getChildrenCount(); ++i)
-    {
-        Bundle& child = bundle.childAt(i);
+	QJsonObject jsonObj = doc.object();
+	int flag = jsonObj[Constants::JSON_PROPERTY_FLAG].toInt();
+	QString message = jsonObj[Constants::JSON_PROPERTY_MESSSAGE].toString();
 
-        writer.writeStartElement(child.getName());
-        writeBundle(child, writer);
-        writer.writeEndElement();
-    }
+	if (flag != Constants::FLAG_OK)
+		QMessageBox::critical(this, tr("Upload Failed"), message);
+
+	return message;
 }
 
-void processBundle(Bundle& bundle, QDomElement& node)
+void MainWidget::quitLater()
 {
-    QDomNamedNodeMap map = node.attributes();
-    for (int i = 0; i < map.length(); ++i)
-    {
-        QDomNode attrib = map.item(i);
-        bundle.add(attrib.nodeName(), attrib.nodeValue());
-    }
-
-    QDomNodeList nodes = node.childNodes();
-    for (int i = 0; i < nodes.size(); ++i)
-    {
-        QDomElement elem = nodes.at(i).toElement();
-        Bundle child(elem.tagName());
-
-        processBundle(child, elem);
-        bundle.addChild(child);
-    }
-}
-
-void MainWidget::readBundle(Bundle& bundle, const QString& str)
-{
-    QDomDocument doc("doc");
-    doc.setContent(str);
-
-    QDomElement docRoot = doc.documentElement();
-    processBundle(bundle, docRoot);
+	m_ShouldQuit = true;
 }
 
 void MainWidget::onIconActivated(QSystemTrayIcon::ActivationReason reason)
 {
-    switch (reason)
-    {
-    case QSystemTrayIcon::ActivationReason::Trigger:
-        break;
+	switch (reason)
+	{
+	case QSystemTrayIcon::ActivationReason::Trigger:
+		break;
 
-    case QSystemTrayIcon::ActivationReason::DoubleClick:
-        show();
-        break;
+	case QSystemTrayIcon::ActivationReason::DoubleClick:
+		show();
+		break;
 
-    case QSystemTrayIcon::ActivationReason::MiddleClick:
-        break;
+	case QSystemTrayIcon::ActivationReason::MiddleClick:
+		break;
 
-    default:
-        break;
-    }
+	default:
+		break;
+	}
 }
 
 void MainWidget::onTabSelected(int index)
 {
-    if (index == ui->tabGroup->count() - 1 || index == -1) // Add a new tab if we selected the add tab, which is always last
-        addNewActionGroup();
+	if (index == ui->tabGroup->count() - 1 || index == -1) // Add a new tab if we selected the add tab, which is always last
+		addNewActionGroup();
 }
 
 void MainWidget::onAddTab()
 {
-    show();
-    addNewActionGroup();
+	show();
+	addNewActionGroup();
 }
 
 void MainWidget::onRemoveTab()
 {
-    openGroupConfigureMenu();
+	openGroupConfigureMenu();
 }
 
 void MainWidget::onConfigure()
 {
-    show();
+	show();
 }
 
 void MainWidget::onConfigureActionGroups()
 {
-    openGroupConfigureMenu();
+	openGroupConfigureMenu();
+}
+
+void MainWidget::onSyncSelected()
+{
+	if (!AuthManager::instance()->isAuth())
+	{
+		LoginDialog* loginDialog = new LoginDialog(this);
+		if (loginDialog->exec() != QDialog::DialogCode::Accepted)
+			return;
+	}
+
+	removeTabs();
+	setupTabs();
+
+	loadFromFile();
+
+	//	m_RequestManager->uploadFile(Constants::UPLOAD_PATH, m_SaveFile);
+}
+
+void MainWidget::onSettingsSelected()
+{
+	SettingsDialog* settingsDialog = new SettingsDialog(this);
+	settingsDialog->exec();
 }
 
 void MainWidget::onQuit()
 {
-    QMessageBox dialog(QMessageBox::Icon::Question, tr("Exit"), tr("Are you sure you want to exit?"), QMessageBox::Yes | QMessageBox::No);
-    if (dialog.exec() == QMessageBox::No)
-        return;
+	QMessageBox dialog(QMessageBox::Icon::Question, tr("Exit"), tr("Are you sure you want to exit?"), QMessageBox::Yes | QMessageBox::No);
+	if (dialog.exec() == QMessageBox::No)
+		return;
 
-    qApp->quit();
+	saveToFile();
+
+	if (AuthManager::instance()->isAuth())
+		m_RequestManager->uploadFile(QUrl(Constants::getUploadPath()), m_SaveFile);
+	else
+		qApp->quit();
+
+	quitLater();
+}
+
+void MainWidget::onRequestFinished(QNetworkReply* reply, bool timedOut)
+{
+	if (timedOut)
+	{
+		QMessageBox::critical(this, tr("Timed Out"), tr("Request timed out."));
+		return;
+	}
+
+	if (reply->error() != QNetworkReply::NetworkError::NoError)
+	{
+		QMessageBox::critical(this, tr("Error"), reply->errorString());
+	}
+
+	parseResponse(reply->readAll());
+
+	if (m_ShouldQuit)
+		qApp->quit();
 }
