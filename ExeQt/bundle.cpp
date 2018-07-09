@@ -1,8 +1,21 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "bundle.h"
 
 #include <QDebug>
+#include <QFile>
+
 #include <QDomDocument>
 #include <QXmlStreamWriter>
+
+#include "common.h"
 
 Bundle::Bundle(const QString& name) : m_Name { name }
 {
@@ -26,7 +39,7 @@ QString Bundle::get(const QString& key) const
 
 void Bundle::addChild(Bundle bundle)
 {
-	m_Children.push_back(bundle);
+	m_Children.append(bundle);
 }
 
 Bundle& Bundle::childAt(int index)
@@ -34,7 +47,7 @@ Bundle& Bundle::childAt(int index)
 	return m_Children[index];
 }
 
-const Bundle&Bundle::childAt(int index) const
+const Bundle& Bundle::childAt(int index) const
 {
 	return m_Children.at(index);
 }
@@ -42,6 +55,11 @@ const Bundle&Bundle::childAt(int index) const
 void Bundle::setChildAt(int index, const Bundle& child)
 {
 	m_Children[index] = child;
+}
+
+bool Bundle::hasKey(const QString& key) const
+{
+	return m_Values.contains(key);
 }
 
 bool Bundle::equals(const Bundle& other) const
@@ -78,7 +96,7 @@ bool Bundle::strongEquals(const Bundle& other) const
 	return bundleEquals(*this, other);
 }
 
-void writeBundle(Bundle bundle, QXmlStreamWriter& writer)
+void writeXMLBundle(Bundle bundle, QXmlStreamWriter& writer)
 {
 	QMap<QString, QString> map = bundle.getValues();
 	for (QMap<QString, QString>::const_iterator i = map.constBegin(); i != map.constEnd(); ++i)
@@ -86,15 +104,15 @@ void writeBundle(Bundle bundle, QXmlStreamWriter& writer)
 
 	for (int i = 0; i < bundle.getChildrenCount(); ++i)
 	{
-		Bundle& child = bundle.childAt(i);
+		const Bundle& child = bundle.childAt(i);
 
 		writer.writeStartElement(child.getName());
-		writeBundle(child, writer);
+		writeXMLBundle(child, writer);
 		writer.writeEndElement();
 	}
 }
 
-QString Bundle::toXml()
+QString Bundle::toXML() const
 {
 	QString str;
 
@@ -103,11 +121,25 @@ QString Bundle::toXml()
 	writer.writeStartDocument();
 	writer.writeStartElement(getName());
 
-	writeBundle(*this, writer);
+	writeXMLBundle(*this, writer);
 
 	writer.writeEndDocument();
 
 	return str;
+}
+
+bool Bundle::saveToFile(const QString& filePath) const
+{
+	QFile file(filePath);
+	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+		return false;
+
+	QTextStream stream(&file);
+	stream << toXML();
+
+	file.close();
+
+	return true;
 }
 
 Bundle Bundle::from(const Bundle& source)
@@ -139,7 +171,7 @@ void processBundle(Bundle& bundle, QDomElement& node)
 	}
 }
 
-Bundle Bundle::fromXml(const QString& xml)
+Bundle Bundle::fromXML(const QString& xml)
 {
 	QDomDocument doc("doc");
 	doc.setContent(xml);
@@ -150,6 +182,14 @@ Bundle Bundle::fromXml(const QString& xml)
 	processBundle(bundle, docRoot);
 
 	return bundle;
+}
+
+Bundle Bundle::fromFile(const QString& fileName)
+{
+	QString text;
+	Common::readFromFile(fileName, text);
+
+	return Bundle::fromXML(text);
 }
 
 Bundle combineBundles(const Bundle& bundle1, const Bundle& bundle2)

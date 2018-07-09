@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "applicationaction.h"
 #include "ui_applicationaction.h"
 
@@ -64,6 +73,11 @@ void ApplicationAction::writeProperties(Bundle& bundle)
 	Action::writeProperties(bundle);
 }
 
+QString ApplicationAction::getDescription() const
+{
+	return "An Application Action represents an executable file, or shell script, that can be run.";
+}
+
 void ApplicationAction::setupSignalsAndSlots()
 {
 	connect(ui->btnBrowse, SIGNAL(clicked()), this, SLOT(onBrowse()));
@@ -120,5 +134,5 @@ void ApplicationAction::onBrowse()
 
 void ApplicationAction::onProcessError(QProcess::ProcessError)
 {
-	qDebug() << "Error";
+	qDebug() << "Application Launch Error";
 }

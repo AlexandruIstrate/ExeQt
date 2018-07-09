@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #ifndef SAVEABLE_H
 #define SAVEABLE_H
 
@@ -20,10 +29,6 @@ public:
 
 protected:
 	virtual void initBundle();
-
-public:
-	static bool writeToFile(const QString& filePath, const QString& text);
-	static bool readFromFile(const QString& filePath, QString& outText);
 };
 
 #endif // SAVEABLE_H

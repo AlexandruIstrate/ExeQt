@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #ifndef APPLICATIONACTION_H
 #define APPLICATIONACTION_H
 
@@ -32,6 +41,8 @@ public:
 
 	void readProperties(Bundle&) override;
 	void writeProperties(Bundle&) override;
+
+	QString getDescription() const override;
 
 	void execute() override;
 	bool validate() override;

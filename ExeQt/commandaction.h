@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #ifndef COMMANDACTION_H
 #define COMMANDACTION_H
 
@@ -33,6 +42,8 @@ public:
 	void readProperties(Bundle&) override;
 	void writeProperties(Bundle&) override;
 
+	QString getDescription() const override;
+
 	void execute() override;
 	bool validate() override;
 
@@ -41,6 +52,9 @@ private:
 
 protected:
 	void initBundle() override;
+
+signals:
+	void exitCodeEmitted(int code);
 
 private slots:
 	void onEdit(QString);

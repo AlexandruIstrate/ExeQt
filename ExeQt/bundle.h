@@ -1,8 +1,17 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #ifndef BUNDLE_H
 #define BUNDLE_H
 
 #include <QString>
-#include <QVector>
+#include <QList>
 #include <QMap>
 
 typedef QMap<QString, QString> ValueMap;
@@ -13,7 +22,7 @@ private:
 	QString m_Name;
 
 	ValueMap m_Values;
-	QVector<Bundle> m_Children;
+	QList<Bundle> m_Children;
 
 public:
 	Bundle(const QString& name = QString());
@@ -22,7 +31,7 @@ public:
 	inline const QString& getName() const { return m_Name; }
 	inline void setName(const QString& name) { m_Name = name; }
 
-	inline const QVector<Bundle>& getChildren() const { return m_Children; }
+	inline const QList<Bundle>& getChildren() const { return m_Children; }
 	inline const ValueMap& getValues() const { return m_Values; }
 
 	inline int getChildrenCount() const { return m_Children.size(); }
@@ -38,14 +47,19 @@ public:
 
 	void setChildAt(int index, const Bundle& child);
 
+	bool hasKey(const QString& key) const;
+
 	bool equals(const Bundle&) const;
 	bool strongEquals(const Bundle&) const;
 
-	QString toXml();
+	QString toXML() const;
+
+	bool saveToFile(const QString& filePath) const;
 
 public:
 	static Bundle from(const Bundle&);
-	static Bundle fromXml(const QString& xml);
+	static Bundle fromXML(const QString& xml);
+	static Bundle fromFile(const QString& fileName);
 
 	static Bundle getBundleDiff(const Bundle&, const Bundle&);
 };

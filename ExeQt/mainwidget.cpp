@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "mainwidget.h"
 
 #include <QDebug>
@@ -23,13 +32,24 @@
 #include "logindialog.h"
 #include "settingsdialog.h"
 #include "stylemanager.h"
+#include "task.h"
+#include "remotecontrol.h"
+#include "remoteauthorizations.h"
+#include "networkmanager.h"
 
 #include "constants.h"
 
+MainWidget* MainWidget::s_Instance = nullptr;
+
 MainWidget::MainWidget(QWidget* parent) :
 	QWidget(parent), ui(new Ui::MainWidget),
-	m_ShouldQuit { false }
+	m_Settings { Constants::COMPANY_NAME, Constants::PRODUCT_NAME }, m_ShouldQuit { false }
 {
+	s_Instance = this;
+	TaskManager::init();
+	NetworkManager::init();
+	ActionServer::start();
+
 	ui->setupUi(this);
 	setStyleSheet(StyleManager::instance()->getStyle());
 
@@ -39,10 +59,17 @@ MainWidget::MainWidget(QWidget* parent) :
 	setupSignalsAndSlots();
 
 	loadFromFile();
+
+	m_RemoteControlDialog = new RemoteControl(this);
 }
 
 MainWidget::~MainWidget()
 {
+	TaskManager::terminate();
+	NetworkManager::terminate();
+	ActionServer::shutdown();
+
+	delete m_RemoteControlDialog;
 	delete ui;
 }
 
@@ -83,11 +110,6 @@ QString MainWidget::getTagName() const
 	return QString("mainWidget");
 }
 
-bool MainWidget::checkBundle(const Bundle& bundle) const
-{
-	return true;
-}
-
 void MainWidget::readProperties(Bundle& bundle)
 {
 	if (!checkBundle(bundle))
@@ -101,6 +123,7 @@ void MainWidget::readProperties(Bundle& bundle)
 	}
 
 	m_TrayIcon->showMessage(tr("Ready to Go"), tr("Loaded %1 groups!").arg(bundle.getChildrenCount()));
+	TaskManager::instance()->run();
 }
 
 void MainWidget::writeProperties(Bundle& bundle)
@@ -143,6 +166,12 @@ void MainWidget::setupActions()
 	m_SyncAction = new QAction(QIcon(":/assets/images/app-actions/cloud-connect.png"), tr("Sync..."), this);
 	connect(m_SyncAction, SIGNAL(triggered()), this, SLOT(onSyncSelected()));
 
+	m_RemoteControlAction = new QAction(QIcon(":/assets/images/app-actions/remote.png"), tr("Remote Control"), this);
+	connect(m_RemoteControlAction, SIGNAL(triggered()), this, SLOT(onRemoteControlSelected()));
+
+	m_AuthAction = new QAction(QIcon(":/assets/images/app-actions/auth.png"), tr("Authorizations"), this);
+	connect(m_AuthAction, SIGNAL(triggered()), this, SLOT(onAuthorizationsSelected()));
+
 	m_SettingsAction = new QAction(QIcon(":/assets/images/app-actions/settings.png"), tr("Settings..."), this);
 	connect(m_SettingsAction, SIGNAL(triggered()), this, SLOT(onSettingsSelected()));
 
@@ -156,6 +185,8 @@ void MainWidget::setupSignalsAndSlots()
 	connect(ui->tabGroup, SIGNAL(tabBarClicked(int)), this, SLOT(onTabSelected(int)));
 
 	connect(ui->btnGroupConfigure, SIGNAL(clicked()), m_ConfigureGroupsAction, SLOT(trigger()));
+
+	connect(NetworkManager::instance(), &NetworkManager::actionsCanUpdate, this, &MainWidget::onActionsCanUpdate);
 }
 
 void MainWidget::setupUI()
@@ -174,7 +205,7 @@ void MainWidget::setupTrayIcon()
 	trayMenu->addAction(m_RemoveTabAction);
 	trayMenu->addAction(m_ConfigureAction);
 	trayMenu->addAction(m_ConfigureGroupsAction);
-	trayMenu->addAction(m_SyncAction);
+	trayMenu->addMenu(createNetworkMenu());
 	trayMenu->addAction(m_SettingsAction);
 	trayMenu->addSeparator();
 	trayMenu->addAction(m_QuitAction);
@@ -183,6 +214,16 @@ void MainWidget::setupTrayIcon()
 	m_TrayIcon->setContextMenu(trayMenu);
 	m_TrayIcon->setIcon(QIcon(":/assets/images/app-icon.png"));
 	m_TrayIcon->show();
+}
+
+QMenu* MainWidget::createNetworkMenu()
+{
+	QMenu* menu = new QMenu(tr("Network"));
+	menu->addAction(m_SyncAction);
+	menu->addAction(m_RemoteControlAction);
+	menu->addAction(m_AuthAction);
+
+	return menu;
 }
 
 void MainWidget::setupTabs()
@@ -203,12 +244,16 @@ void MainWidget::addTab(ActionTab* tab)
 {
 	insertTab(tab);
 	m_ActionTabs.push_back(tab);
+
+	NetworkManager::instance()->requestActionUpdate();
 }
 
 void MainWidget::removeTab(ActionTab* tab)
 {
 	m_ActionTabs.removeOne(tab);
 	tab->deleteLater();
+
+	NetworkManager::instance()->requestActionUpdate();
 }
 
 void MainWidget::openGroupConfigureMenu()
@@ -244,16 +289,12 @@ void MainWidget::saveToFile()
 	Bundle bundle(getTagName());
 	writeProperties(bundle);
 
-	QString str = bundle.toXml();
-	Saveable::writeToFile(m_SaveFile, str);
+	bundle.saveToFile(m_SaveFile);
 }
 
 void MainWidget::loadFromFile()
 {
-	QString str;
-	Saveable::readFromFile(m_SaveFile, str);
-
-	Bundle bundle = Bundle::fromXml(str);
+	Bundle bundle = Bundle::fromFile(m_SaveFile);
 	readProperties(bundle);
 }
 
@@ -349,6 +390,20 @@ void MainWidget::onSyncSelected()
 	//	m_RequestManager->uploadFile(Constants::UPLOAD_PATH, m_SaveFile);
 }
 
+void MainWidget::onRemoteControlSelected()
+{
+//	RemoteControl* remoteControl = new RemoteControl(this);
+//	remoteControl->exec();
+
+	m_RemoteControlDialog->exec();
+}
+
+void MainWidget::onAuthorizationsSelected()
+{
+	RemoteAuthorizations* remoteAuth = new RemoteAuthorizations(this);
+	remoteAuth->exec();
+}
+
 void MainWidget::onSettingsSelected()
 {
 	SettingsDialog* settingsDialog = new SettingsDialog(this);
@@ -388,4 +443,17 @@ void MainWidget::onRequestFinished(QNetworkReply* reply, bool timedOut)
 
 	if (m_ShouldQuit)
 		qApp->quit();
+}
+
+void MainWidget::onActionsCanUpdate()
+{
+	if (!NetworkManager::instance()->hasConnectedClients())
+		return;
+
+	qDebug() << "Updating actions";
+
+	Bundle bundle(getTagName());
+	writeProperties(bundle);
+
+	NetworkManager::instance()->updateActions(bundle);
 }

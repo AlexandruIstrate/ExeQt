@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "actiontab.h"
 #include "ui_actiontab.h"
 
@@ -8,6 +17,7 @@
 #include "menuaction.h"
 #include "appicon.h"
 #include "addgroupdialog.h"
+#include "networkmanager.h"
 
 #define NAME_PROPERTY           "name"
 #define ICON_PROPERTY           "icon"
@@ -192,6 +202,8 @@ void ActionTab::onActionAdd()
 
 	removeGhostAction();
 	addAction(action);
+
+	NetworkManager::instance()->requestActionUpdate();
 }
 
 void ActionTab::onActionRemove()
@@ -202,6 +214,8 @@ void ActionTab::onActionRemove()
 
 	ActionItem* action = m_ActionItems[line];
 	removeAction(action);
+
+	NetworkManager::instance()->requestActionUpdate();
 }
 
 void ActionTab::onActionEdit()
@@ -214,6 +228,8 @@ void ActionTab::onActionEdit()
 	action->exec();
 
 	updateActions();
+
+	NetworkManager::instance()->requestActionUpdate();
 }
 
 void ActionTab::onDoubleClick()
