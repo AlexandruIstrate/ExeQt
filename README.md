@@ -44,7 +44,7 @@ Running actions on another computer on the LAN
 
 ## Compiling from Source
 
-You must first have the Qt Toolkit installed on your machine
+You must first have the GNU compiler (gcc) and the Qt Toolkit installed on your machine
 
 - **Windows:** The project must be first built using the QtCreator IDE and then if you want to create a standalone executable you must use the tool [windeployqt](https://doc.qt.io/qt-5/windows-deployment.html) which creates a directory with your app and all of the required DLLs so that you can run ExeQt on a system without having Qt installed
 
@@ -53,4 +53,6 @@ You must first have the Qt Toolkit installed on your machine
 - **Linux:** The project must be first built using the qMake script (or the QtCreator IDE) and then if you want to create a standalone executable you must use the tool [linuxdeployqt](https://github.com/probonopd/linuxdeployqt) which creates an AppImage so that you can run ExeQt on a system without having Qt installed
 
 ## Disclaimer
-I do not own any of the icons used in this project. I thank the wonderful people at findicons.com and iconarchive.com for making these available to the public for free.
+I do not own any of the icons used in this project. I thank the wonderful people at [findicons.com](findicons.com) and [iconarchive.com](iconarchive.com) for making these available to the public for free.
+My thanks to the Canonical team for providing beautiful desktop wallpapers for their Ubuntu operating system.
+Also on the list of things I don't own is the nice ExeQt WordArt that I used as the picture at the top of this page. That image was made with a free tool from [WordArt.com](https://wordart.com/)
