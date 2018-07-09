@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "commandaction.h"
 #include "ui_commandaction.h"
 
@@ -64,9 +73,15 @@ void CommandAction::writeProperties(Bundle& bundle)
 	Action::writeProperties(bundle);
 }
 
+QString CommandAction::getDescription() const
+{
+	return "A Command Action represents a command line command.";
+}
+
 void CommandAction::execute()
 {
-	system(m_Command.toStdString().c_str());
+	int exitCode = system(m_Command.toStdString().c_str());
+	emit exitCodeEmitted(exitCode);
 }
 
 bool CommandAction::validate()

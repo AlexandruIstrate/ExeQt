@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "groupconfigure.h"
 #include "ui_groupconfigure.h"
 
@@ -5,93 +14,97 @@
 #include <QListWidgetItem>
 
 #include "addgroupdialog.h"
+#include "networkmanager.h"
 
 GroupConfigure::GroupConfigure(MainWidget* parent) :
-    QDialog(parent), ui(new Ui::GroupConfigure),
-    m_ActionTabs { parent->m_ActionTabs }
+	QDialog(parent), ui(new Ui::GroupConfigure),
+	m_ActionTabs { parent->m_ActionTabs }
 {
-    ui->setupUi(this);
+	ui->setupUi(this);
 
-    setupUI();
-    setupActions();
-    setupSignalsAndSlots();
+	setupUI();
+	setupActions();
+	setupSignalsAndSlots();
 }
 
 GroupConfigure::~GroupConfigure()
 {
-    delete ui;
+	delete ui;
 }
 
 void GroupConfigure::setupActions()
 {
-    m_ActionAdd = new QAction(tr("Add"), this);
-    connect(m_ActionAdd, SIGNAL(triggered()), this, SLOT(onAdd()));
+	m_ActionAdd = new QAction(tr("Add"), this);
+	connect(m_ActionAdd, SIGNAL(triggered()), this, SLOT(onAdd()));
 
-    m_ActionRemove = new QAction(tr("Remove"), this);
-    connect(m_ActionRemove, SIGNAL(triggered()), this, SLOT(onRemove()));
+	m_ActionRemove = new QAction(tr("Remove"), this);
+	connect(m_ActionRemove, SIGNAL(triggered()), this, SLOT(onRemove()));
 
-    m_ActionEdit = new QAction(tr("Edit"), this);
-    connect(m_ActionEdit, SIGNAL(triggered()), this, SLOT(onEdit()));
+	m_ActionEdit = new QAction(tr("Edit"), this);
+	connect(m_ActionEdit, SIGNAL(triggered()), this, SLOT(onEdit()));
 }
 
 void GroupConfigure::setupSignalsAndSlots()
 {
-    connect(ui->btnAdd, SIGNAL(clicked()), m_ActionAdd, SLOT(trigger()));
-    connect(ui->btnRemove, SIGNAL(clicked()), m_ActionRemove, SLOT(trigger()));
-    connect(ui->btnEdit, SIGNAL(clicked()), m_ActionEdit, SLOT(trigger()));
+	connect(ui->btnAdd, SIGNAL(clicked()), m_ActionAdd, SLOT(trigger()));
+	connect(ui->btnRemove, SIGNAL(clicked()), m_ActionRemove, SLOT(trigger()));
+	connect(ui->btnEdit, SIGNAL(clicked()), m_ActionEdit, SLOT(trigger()));
 
-    connect(ui->lstGroups, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onDoubleClick()));
+	connect(ui->lstGroups, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(onDoubleClick()));
 }
 
 void GroupConfigure::setupUI()
 {
-    showActionGroups();
+	showActionGroups();
 }
 
 int GroupConfigure::getSelectedItem()
 {
-    return ui->lstGroups->currentRow();
+	return ui->lstGroups->currentRow();
 }
 
 void GroupConfigure::showActionGroups()
 {
-    ui->lstGroups->clear();
+	ui->lstGroups->clear();
 
-    for (ActionTab* tab : m_ActionTabs)
-        new QListWidgetItem(tab->getIcon().icon, tab->getName(), ui->lstGroups);
+	for (ActionTab* tab : m_ActionTabs)
+		new QListWidgetItem(tab->getIcon().icon, tab->getName(), ui->lstGroups);
 }
 
 void GroupConfigure::onAdd()
 {
-    MainWidget* mw = (MainWidget*) parent();
-    mw->addNewActionGroup();
+	MainWidget* mw = (MainWidget*) parent();
+	mw->addNewActionGroup();
 
-    showActionGroups();
+	showActionGroups();
+	NetworkManager::instance()->requestActionUpdate();
 }
 
 void GroupConfigure::onRemove()
 {
-    int selectedItem = getSelectedItem();
-    if (selectedItem == -1)
-        return;
+	int selectedItem = getSelectedItem();
+	if (selectedItem == -1)
+		return;
 
-    MainWidget* mw = (MainWidget*) parent();
-    mw->removeActionGroup(selectedItem);
+	MainWidget* mw = (MainWidget*) parent();
+	mw->removeActionGroup(selectedItem);
 
-    delete ui->lstGroups->takeItem(selectedItem);
+	delete ui->lstGroups->takeItem(selectedItem);
 
-    showActionGroups();
+	showActionGroups();
+	NetworkManager::instance()->requestActionUpdate();
 }
 
 void GroupConfigure::onEdit()
 {
-    AddGroupDialog* addDialog = new AddGroupDialog(m_ActionTabs.at(getSelectedItem()));
-    addDialog->deleteLater();
+	AddGroupDialog* addDialog = new AddGroupDialog(m_ActionTabs.at(getSelectedItem()));
+	addDialog->deleteLater();
 
-    showActionGroups();
+	showActionGroups();
+	NetworkManager::instance()->requestActionUpdate();
 }
 
 void GroupConfigure::onDoubleClick()
 {
-    m_ActionEdit->trigger();
+	m_ActionEdit->trigger();
 }

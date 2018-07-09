@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "action.h"
 
 #include <QDebug>
@@ -5,6 +14,7 @@
 #include "commandaction.h"
 #include "applicationaction.h"
 #include "linkaction.h"
+#include "setaction.h"
 
 #include <QMessageBox>
 
@@ -20,6 +30,11 @@ Action::Action(const QString& name, Type type, QWidget* parent)
 Action::~Action()
 {
 
+}
+
+QIcon Action::getIcon() const
+{
+	return getActionIcon(m_Type);
 }
 
 QString Action::getTagName() const
@@ -66,26 +81,11 @@ Action* Action::create(Type type, QWidget* parent)
 	case Type::LINK:
 		return new LinkAction("", parent);
 
+	case Type::SET:
+		return new SetAction("", parent);
+
 	default:
 		return nullptr;
-	}
-}
-
-QString Action::getTypeName(Action::Type type)
-{
-	switch (type)
-	{
-	case Type::COMMAND:
-		return tr("Command Action");
-
-	case Type::APPLICATION:
-		return tr("Application Action");
-
-	case Type::LINK:
-		return tr("Link Action");
-
-	default:
-		return tr("Unknown Action");
 	}
 }
 
@@ -102,7 +102,74 @@ QIcon Action::getActionIcon(Action::Type type)
 	case Type::LINK:
 		return QIcon(":/assets/images/action-types/link.png");
 
+	case Type::SET:
+		return QIcon(":/assets/images/action-types/set.png");
+
 	default:
-		return QIcon();
+		return QIcon(":/assets/images/action-types/unknown.png");
 	}
+}
+
+QIcon Action::getActionIcon(const QString& tag)
+{
+	return getActionIcon(getActionTypeFromTag(tag));
+}
+
+QString Action::getTypeName(Action::Type type)
+{
+	switch (type)
+	{
+	case Type::COMMAND:
+		return tr("Command Action");
+
+	case Type::APPLICATION:
+		return tr("Application Action");
+
+	case Type::LINK:
+		return tr("Link Action");
+
+	case Type::SET:
+		return tr("Set Action");
+
+	default:
+		return tr("Unknown Action");
+	}
+}
+
+QString Action::getActionTag(Action::Type type)
+{
+	switch (type)
+	{
+	case Type::COMMAND:
+		return "commandAction";
+
+	case Type::APPLICATION:
+		return "applicationAction";
+
+	case Type::LINK:
+		return "linkAction";
+
+	case Type::SET:
+		return "setAction";
+
+	default:
+		return "unknown";
+	}
+}
+
+Action::Type Action::getActionTypeFromTag(const QString& tag)
+{
+	if (tag == "commandAction")
+		return Type::COMMAND;
+
+	if (tag == "applicationAction")
+		return Type::APPLICATION;
+
+	if (tag == "linkAction")
+		return Type::LINK;
+
+	if (tag == "setAction")
+		return Type::SET;
+
+	return Type::UNKNOWN;
 }

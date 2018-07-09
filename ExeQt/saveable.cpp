@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "saveable.h"
 
 #include <QDebug>
@@ -28,36 +37,4 @@ bool Saveable::checkBundle(const Bundle& bundle) const
 void Saveable::initBundle()
 {
 	// No-Op
-}
-
-bool Saveable::writeToFile(const QString& filePath, const QString& text)
-{
-	QFile file(filePath);
-	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-		return false;
-
-	QTextStream stream(&file);
-	stream << text;
-
-	file.close();
-
-	return true;
-}
-
-bool Saveable::readFromFile(const QString& filePath, QString& outText)
-{
-	QFile inputFile(filePath);
-	if (!inputFile.open(QIODevice::ReadOnly | QIODevice::Text))
-		return false;
-
-	QTextStream in(&inputFile);
-	QString text;
-
-	while (!in.atEnd())
-	   text.append(in.readLine());
-
-	inputFile.close();
-	outText = text;
-
-	return true;
 }

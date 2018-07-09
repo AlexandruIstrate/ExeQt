@@ -21,5 +21,16 @@
         <file>assets/images/app-actions/cloud-connect.png</file>
         <file>style.qss</file>
         <file>assets/images/app-actions/settings.png</file>
+        <file>assets/images/info.png</file>
+        <file>assets/images/action-types/set.png</file>
+        <file>assets/images/app-actions/remote.png</file>
+        <file>assets/images/app-actions/auth.png</file>
+        <file>assets/images/other.png</file>
+        <file>assets/images/current.png</file>
+        <file>assets/images/connect.png</file>
+        <file>assets/images/action-types/unknown.png</file>
+        <file>assets/images/reference.png</file>
+        <file>assets/images/desktop-icon.png</file>
+        <file>assets/images/remote-control.png</file>
     </qresource>
 </RCC>

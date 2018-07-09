@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #ifndef STYLEMANAGER_H
 #define STYLEMANAGER_H
 

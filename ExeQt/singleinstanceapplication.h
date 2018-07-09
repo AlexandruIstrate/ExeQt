@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #ifndef SINGLEINSTANCEAPPLICATION_H
 #define SINGLEINSTANCEAPPLICATION_H
 
@@ -8,19 +17,19 @@
 class SingleInstanceApplication
 {
 private:
-    QApplication m_App;
-    QSystemSemaphore m_Semaphore;
+	QApplication m_App;
+	QSystemSemaphore m_Semaphore;
 
-    void (*m_OnStart) (void);
-    void (*m_OnRunning) (void);
+	void (*m_OnStart) (void);
+	void (*m_OnRunning) (void);
 
 public:
-    SingleInstanceApplication(int argc, char* argv[]);
+	SingleInstanceApplication(int argc, char* argv[]);
 
-    void setOnStart(void (*func) (void));
-    void setOnInstanceRunning(void (*func) (void));
+	void setOnStart(void (*func) (void));
+	void setOnInstanceRunning(void (*func) (void));
 
-    int exec(QWidget*);
+	int exec(QWidget*);
 };
 
 #endif // SINGLEINSTANCEAPPLICATION_H

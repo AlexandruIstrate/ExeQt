@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "mainpage.h"
 #include "ui_mainpage.h"
 
@@ -47,7 +56,7 @@ void MainPage::setupSignalsAndSlots()
 void MainPage::loadSettings()
 {
 	QSettings settings(Constants::COMPANY_NAME, Constants::PRODUCT_NAME);
-	Constants::SERVER_ADDRESS = settings.value(Constants::SETTING_KEY_IP, Constants::SERVER_ADDRESS).toString();
+	Constants::s_ServerAddress = settings.value(Constants::SETTING_KEY_IP, Constants::s_ServerAddress).toString();
 }
 
 void MainPage::onSync()

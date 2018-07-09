@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "linkaction.h"
 #include "ui_linkaction.h"
 
@@ -57,6 +66,11 @@ void LinkAction::writeProperties(Bundle& bundle)
 {
 	bundle.add(LINK_PROPERTY, m_Link);
 	Action::writeProperties(bundle);
+}
+
+QString LinkAction::getDescription() const
+{
+	return "A Link Action represents a link to a local resource (such as a file) or to a remote one (such as a web page).";
 }
 
 void LinkAction::execute()

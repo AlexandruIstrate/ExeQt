@@ -45,7 +45,20 @@ SOURCES += \
     constants.cpp \
     stylemanager.cpp \
     singleinstanceapplication.cpp \
-    settingsdialog.cpp
+    settingsdialog.cpp \
+    setaction.cpp \
+    actionsettree.cpp \
+    task.cpp \
+    remotecontrol.cpp \
+    remoteauthorizations.cpp \
+    remotecontroltab.cpp \
+    remoteauthtab.cpp \
+    networkmanager.cpp \
+    authconnecttab.cpp \
+    common.cpp \
+    networkmessage.cpp \
+    actionreference.cpp \
+    clientinfodialog.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -69,7 +82,20 @@ HEADERS += \
     authmanager.h \
     stylemanager.h \
     singleinstanceapplication.h \
-    settingsdialog.h
+    settingsdialog.h \
+    setaction.h \
+    actionsettree.h \
+    task.h \
+    remotecontrol.h \
+    remoteauthorizations.h \
+    remotecontroltab.h \
+    remoteauthtab.h \
+    networkmanager.h \
+    authconnecttab.h \
+    common.h \
+    networkmessage.h \
+    actionreference.h \
+    clientinfodialog.h
 
 FORMS += \
         mainwidget.ui \
@@ -83,7 +109,14 @@ FORMS += \
     linkaction.ui \
     logindialog.ui \
     mainpage.ui \
-    settingsdialog.ui
+    settingsdialog.ui \
+    setaction.ui \
+    remotecontrol.ui \
+    remoteauthorizations.ui \
+    remotecontroltab.ui \
+    remoteauthtab.ui \
+    authconnecttab.ui \
+    clientinfodialog.ui
 
 RESOURCES += \
     resources.qrc

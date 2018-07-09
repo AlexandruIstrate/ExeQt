@@ -1,10 +1,19 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #ifndef MAINWIDGET_H
 #define MAINWIDGET_H
 
 #include <QAction>
 #include <QWidget>
 #include <QPoint>
-#include <QVector>
+#include <QList>
 #include <QSystemTrayIcon>
 #include <QApplication>
 #include <QMenu>
@@ -14,9 +23,13 @@
 #include "requestmanager.h"
 #include "constants.h"
 
+typedef QList<ActionTab*> ActionTabList;
+
 namespace Ui {
 	class MainWidget;
 }
+
+class RemoteControl;
 
 class MainWidget : public QWidget, public Saveable
 {
@@ -26,6 +39,9 @@ private:
 	friend class GroupConfigure;
 
 private:
+	static MainWidget* s_Instance;
+
+private:
 	Ui::MainWidget* ui;
 
 	QAction* m_ConfigureAction;
@@ -33,6 +49,8 @@ private:
 	QAction* m_QuitAction;
 
 	QAction* m_SyncAction;
+	QAction* m_RemoteControlAction;
+	QAction* m_AuthAction;
 	QAction* m_SettingsAction;
 
 	QAction* m_AddTabAction;
@@ -40,9 +58,12 @@ private:
 
 	QSystemTrayIcon* m_TrayIcon;
 
-	QVector<ActionTab*> m_ActionTabs;
+	ActionTabList m_ActionTabs;
 
 	RequestManager* m_RequestManager;
+	RemoteControl* m_RemoteControlDialog;
+
+	QSettings m_Settings;
 
 	bool m_ShouldQuit;
 
@@ -52,14 +73,17 @@ public:
 	explicit MainWidget(QWidget* parent = nullptr);
 	~MainWidget();
 
+	inline static MainWidget* instance() { return s_Instance; }
+	inline ActionTabList getActionTabs() const { return m_ActionTabs; }
+
+	inline QSettings& getSettings() { return m_Settings; }
+
 	QIcon getTabIcon(int index);
 
 	void addNewActionGroup();
 	void removeActionGroup(int index);
 
 	QString getTagName() const override;
-
-	bool checkBundle(const Bundle&) const override;
 
 	void readProperties(Bundle&) override;
 	void writeProperties(Bundle&) override;
@@ -74,6 +98,7 @@ private:
 
 	void setupUI();
 	void setupTrayIcon();
+	QMenu* createNetworkMenu();
 
 	void setupTabs();
 	void insertTab(ActionTab*);
@@ -104,10 +129,14 @@ private slots:
 	void onConfigure();
 	void onConfigureActionGroups();
 	void onSyncSelected();
+	void onRemoteControlSelected();
+	void onAuthorizationsSelected();
 	void onSettingsSelected();
 	void onQuit();
 
 	void onRequestFinished(QNetworkReply* reply, bool timedOut);
+
+	void onActionsCanUpdate();
 };
 
 #endif // MAINWIDGET_H

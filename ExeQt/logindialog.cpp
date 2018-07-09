@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "logindialog.h"
 #include "ui_logindialog.h"
 
@@ -50,22 +59,23 @@ QString LoginDialog::parseJsonMessage(const QString& jsonText)
 	{
 		const QString SAVE_FILE = QApplication::applicationDirPath() + QString("/") + Constants::SAVE_FILE_NAME;
 
-		QString str;
-		if (!Saveable::readFromFile(SAVE_FILE, str))
-		{
-			QMessageBox::critical(this, tr("File Read Error"), tr("Could not read local XML save file!"));
-			return message;
-		}
+//		QString str;
+//		if (!Saveable::readFromFile(SAVE_FILE, str))
+//		{
+//			QMessageBox::critical(this, tr("File Read Error"), tr("Could not read local XML save file!"));
+//			return message;
+//		}
 
-		Bundle webBundle = Bundle::fromXml(message);
-		Bundle localBundle = Bundle::fromXml(str);
+		Bundle webBundle = Bundle::fromXML(message);
+		Bundle localBundle = Bundle::fromFile(SAVE_FILE);
 
 		Bundle diff = Bundle::getBundleDiff(webBundle, localBundle);
-		QString diffXml = diff.toXml();
+		diff.saveToFile(SAVE_FILE);
+//		QString diffXml = diff.toXml();
 
 //		Saveable::writeToFile(QApplication::applicationDirPath() + QString("/test.xml"), diffXml);
 
-		Saveable::writeToFile(SAVE_FILE, diffXml);
+//		Saveable::writeToFile(SAVE_FILE, diffXml);
 	}
 	else
 	{

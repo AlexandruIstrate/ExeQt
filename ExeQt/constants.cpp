@@ -1,23 +1,29 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #include "constants.h"
 
-QString Constants::SERVER_ADDRESS = "https://andu.internals.ro/endpoint";
-//const QString Constants::UPLOAD_PATH = SERVER_ADDRESS + QString("/upload.php");
-//const QString Constants::DOWNLOAD_PATH = SERVER_ADDRESS + QString("/download.php");
-//const QString Constants::AUTH_PATH = SERVER_ADDRESS + QString("/auth.php");
+QString Constants::s_ServerAddress = "https://andu.internals.ro/endpoint";
 
 QString Constants::getUploadPath()
 {
-	return SERVER_ADDRESS + QString("/upload.php");
+	return s_ServerAddress + QString("/upload.php");
 }
 
 QString Constants::getDownloadPath()
 {
-	return SERVER_ADDRESS + QString("/download.php");
+	return s_ServerAddress + QString("/download.php");
 }
 
 QString Constants::getAuthPath()
 {
-	return SERVER_ADDRESS + QString("/auth.php");
+	return s_ServerAddress + QString("/auth.php");
 }
 
 const QString Constants::SAVE_FILE_NAME = "exeqt-save.xml";
@@ -29,3 +35,4 @@ const QString Constants::COMPANY_NAME = "ExeQt Company";
 const QString Constants::PRODUCT_NAME = "ExeQt";
 
 const QString Constants::SETTING_KEY_IP = "serverAddress";
+const QString Constants::SETTING_KEY_CLIENT_NAME = "clientName";

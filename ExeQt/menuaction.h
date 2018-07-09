@@ -1,3 +1,12 @@
+/**************************************************************************
+ *
+ * Copyright (c) 2018 Alexandru Istrate
+ *
+ * This file is subject to the terms and conditions defined in the
+ * file 'LICENSE', which is part of this source code package.
+ *
+**************************************************************************/
+
 #ifndef MENUACTION_H
 #define MENUACTION_H
 
@@ -9,16 +18,16 @@
 
 class MenuAction : public QAction
 {
-    Q_OBJECT
+	Q_OBJECT
 
 private:
-    Action* m_Action;
+	Action* m_Action;
 
 public:
-    MenuAction(Action* action, QObject* parent = nullptr);
+	MenuAction(Action* action, QObject* parent = nullptr);
 
 private slots:
-    void onTrigger();
+	void onTrigger();
 };
 
 #endif // MENUACTION_H
