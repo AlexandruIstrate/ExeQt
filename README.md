@@ -55,4 +55,4 @@ You must first have the GNU compiler (gcc) and the Qt Toolkit installed on your 
 ## Disclaimer
 I do not own any of the icons used in this project. I thank the wonderful people at [findicons.com](findicons.com) and [iconarchive.com](iconarchive.com) for making these available to the public for free.
 My thanks to the Canonical team for providing beautiful desktop wallpapers for their Ubuntu operating system.
-Also on the list of things I don't own is the nice ExeQt WordArt that I used as the picture at the top of this page. That image was made with a free tool from [WordArt.com](https://wordart.com/)
+Also on the list of things not entirely made by me is the nice ExeQt WordArt that I used as the picture at the top of this page. That image was made with a free tool from [WordArt.com](https://wordart.com/)
