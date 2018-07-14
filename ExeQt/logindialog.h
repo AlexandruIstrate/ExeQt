@@ -38,6 +38,10 @@ private:
 
 	QString parseJsonMessage(const QString& jsonText);
 
+signals:
+	void doneLogin();
+	void doneFileDownload();
+
 private slots:
 	void onLogIn();
 	void onLoginDone();

@@ -63,11 +63,7 @@ private:
 	RequestManager* m_RequestManager;
 	RemoteControl* m_RemoteControlDialog;
 
-	QSettings m_Settings;
-
 	bool m_ShouldQuit;
-
-	QString m_SaveFile = QApplication::applicationDirPath() + QString("/") + Constants::SAVE_FILE_NAME;
 
 public:
 	explicit MainWidget(QWidget* parent = nullptr);
@@ -75,8 +71,6 @@ public:
 
 	inline static MainWidget* instance() { return s_Instance; }
 	inline ActionTabList getActionTabs() const { return m_ActionTabs; }
-
-	inline QSettings& getSettings() { return m_Settings; }
 
 	QIcon getTabIcon(int index);
 

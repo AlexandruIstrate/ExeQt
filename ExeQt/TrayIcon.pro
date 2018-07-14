@@ -55,10 +55,10 @@ SOURCES += \
     remoteauthtab.cpp \
     networkmanager.cpp \
     authconnecttab.cpp \
-    common.cpp \
     networkmessage.cpp \
     actionreference.cpp \
-    clientinfodialog.cpp
+    clientinfodialog.cpp \
+    settingsregistry.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -95,7 +95,8 @@ HEADERS += \
     common.h \
     networkmessage.h \
     actionreference.h \
-    clientinfodialog.h
+    clientinfodialog.h \
+    settingsregistry.h
 
 FORMS += \
         mainwidget.ui \
@@ -122,6 +123,7 @@ RESOURCES += \
     resources.qrc
 
 #include($$PWD/libs/singleapplication/src/qtsingleapplication.pri)
+include($$PWD/lib/qtsingleapplication/src/qtsingleapplication.pri)
 
 DISTFILES += \
     style.qss

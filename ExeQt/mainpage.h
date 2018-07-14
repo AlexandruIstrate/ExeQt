@@ -26,6 +26,7 @@ private:
 	Ui::MainPage* ui;
 
 	QAction* m_ActionSync;
+	QAction* m_ActionSettings;
 	QAction* m_ActionContinue;
 
 public:
@@ -39,10 +40,9 @@ private:
 	void setupActions();
 	void setupSignalsAndSlots();
 
-	void loadSettings();
-
 private slots:
 	void onSync();
+	void onOpenSettings();
 	void onContinue();
 };
 

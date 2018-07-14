@@ -10,11 +10,12 @@
 #include "mainpage.h"
 #include "ui_mainpage.h"
 
-#include <QSettings>
+#include <QPushButton>
 
 #include "logindialog.h"
 #include "mainwidget.h"
 #include "stylemanager.h"
+#include "settingsdialog.h"
 
 MainPage::MainPage(QWidget* parent) :
 	QDialog(parent),
@@ -25,7 +26,6 @@ MainPage::MainPage(QWidget* parent) :
 
 	setupActions();
 	setupSignalsAndSlots();
-	loadSettings();
 }
 
 MainPage::~MainPage()
@@ -41,41 +41,42 @@ void MainPage::closeEvent(QCloseEvent*)
 void MainPage::setupActions()
 {
 	m_ActionSync = new QAction(tr("Sync"), this);
-	connect(m_ActionSync, SIGNAL(triggered()), this, SLOT(onSync()));
+	connect(m_ActionSync, &QAction::triggered, this, &MainPage::onSync);
+
+	m_ActionSettings = new QAction(tr("Settings"), this);
+	connect(m_ActionSettings, &QAction::triggered, this, &MainPage::onOpenSettings);
 
 	m_ActionContinue = new QAction(tr("Continue"), this);
-	connect(m_ActionContinue, SIGNAL(triggered()), this, SLOT(onContinue()));
+	connect(m_ActionContinue, &QAction::triggered, this, &MainPage::onContinue);
 }
 
 void MainPage::setupSignalsAndSlots()
 {
-	connect(ui->btnSync, SIGNAL(clicked()), m_ActionSync, SLOT(trigger()));
-	connect(ui->btnContinue, SIGNAL(clicked()), m_ActionContinue, SLOT(trigger()));
-}
-
-void MainPage::loadSettings()
-{
-	QSettings settings(Constants::COMPANY_NAME, Constants::PRODUCT_NAME);
-	Constants::s_ServerAddress = settings.value(Constants::SETTING_KEY_IP, Constants::s_ServerAddress).toString();
+	connect(ui->btnSync, &QPushButton::clicked, m_ActionSync, &QAction::trigger);
+	connect(ui->btnSettings, &QPushButton::clicked, m_ActionSettings, &QAction::trigger);
+	connect(ui->btnContinue, &QPushButton::clicked, m_ActionContinue, &QAction::trigger);
 }
 
 void MainPage::onSync()
 {
-	LoginDialog* logDialog = new LoginDialog(this);
+	LoginDialog logDialog(this);
 
-	if (logDialog->exec() != QDialog::DialogCode::Accepted)
+	if (logDialog.exec() != QDialog::DialogCode::Accepted)
 		return;
 
-	hide();
+	onContinue();
+}
 
-	MainWidget* mw = new MainWidget();
-	mw->show();
+void MainPage::onOpenSettings()
+{
+	SettingsDialog settingsDialog(this);
+	settingsDialog.exec();
 }
 
 void MainPage::onContinue()
 {
+	hide();
+
 	MainWidget* mw = new MainWidget();
 	mw->show();
-
-	hide();
 }

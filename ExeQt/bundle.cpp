@@ -229,7 +229,7 @@ Bundle combineBundles(const Bundle& bundle1, const Bundle& bundle2)
 	return ret;
 }
 
-Bundle Bundle::getBundleDiff(const Bundle& bundle1, const Bundle& bundle2)
+Bundle Bundle::mergeBundles(const Bundle& bundle1, const Bundle& bundle2)
 {
 	return combineBundles(bundle1, bundle2);
 }
