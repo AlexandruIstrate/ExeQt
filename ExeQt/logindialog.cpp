@@ -20,6 +20,7 @@
 #include "saveable.h"
 #include "mainwidget.h"
 #include "authmanager.h"
+#include "common.h"
 
 LoginDialog::LoginDialog(QWidget* parent) :
 	QDialog(parent), ui(new Ui::LoginDialog)
@@ -57,25 +58,13 @@ QString LoginDialog::parseJsonMessage(const QString& jsonText)
 
 	if (flag == Constants::FLAG_OK)
 	{
-		const QString SAVE_FILE = QApplication::applicationDirPath() + QString("/") + Constants::SAVE_FILE_NAME;
-
-//		QString str;
-//		if (!Saveable::readFromFile(SAVE_FILE, str))
-//		{
-//			QMessageBox::critical(this, tr("File Read Error"), tr("Could not read local XML save file!"));
-//			return message;
-//		}
+		const QString SAVE_FILE = Common::getSaveFilePath();
 
 		Bundle webBundle = Bundle::fromXML(message);
 		Bundle localBundle = Bundle::fromFile(SAVE_FILE);
 
-		Bundle diff = Bundle::getBundleDiff(webBundle, localBundle);
-		diff.saveToFile(SAVE_FILE);
-//		QString diffXml = diff.toXml();
-
-//		Saveable::writeToFile(QApplication::applicationDirPath() + QString("/test.xml"), diffXml);
-
-//		Saveable::writeToFile(SAVE_FILE, diffXml);
+		Bundle merged = Bundle::mergeBundles(webBundle, localBundle);
+		merged.saveToFile(SAVE_FILE);
 	}
 	else
 	{
@@ -87,11 +76,15 @@ QString LoginDialog::parseJsonMessage(const QString& jsonText)
 
 void LoginDialog::onLogIn()
 {
+	ui->lblState->setText("Logging in...");
 	AuthManager::instance()->authenticate(ui->edtUser->text(), ui->edtPassword->text());
 }
 
 void LoginDialog::onLoginDone()
 {
+	emit doneLogin();
+	ui->lblState->setText("Synchronizing actions...");
+
 	QString url = RequestManager::buildUrl(Constants::getDownloadPath(), AuthManager::instance()->getToken());
 	m_RequestManager->downloadFile(url);
 }
@@ -111,5 +104,8 @@ void LoginDialog::onRequestFinished(QNetworkReply* reply, bool timedOut)
 	}
 
 	parseJsonMessage(reply->readAll());
-	accept();   // TODO: Maybe let the user close the dialog?
+	accept();
+
+	ui->lblState->setText("Done");
+	emit doneFileDownload();
 }

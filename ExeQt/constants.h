@@ -15,22 +15,18 @@
 class Constants
 {
 public:
-	static QString s_ServerAddress;
-
 	static QString getUploadPath();
 	static QString getDownloadPath();
 	static QString getAuthPath();
 
-	static const QString SAVE_FILE_NAME;
+	static const QString DEFAULT_SAVE_FILE_NAME;
+	static const QString DEFAULT_SERVER_ADDRESS;
 
 	static const QString JSON_PROPERTY_FLAG;
 	static const QString JSON_PROPERTY_MESSSAGE;
 
 	static const QString COMPANY_NAME;
 	static const QString PRODUCT_NAME;
-
-	static const QString SETTING_KEY_IP;
-	static const QString SETTING_KEY_CLIENT_NAME;
 
 	enum
 	{

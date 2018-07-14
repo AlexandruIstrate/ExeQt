@@ -61,7 +61,7 @@ public:
 	static Bundle fromXML(const QString& xml);
 	static Bundle fromFile(const QString& fileName);
 
-	static Bundle getBundleDiff(const Bundle&, const Bundle&);
+	static Bundle mergeBundles(const Bundle&, const Bundle&);
 };
 
 #endif // BUNDLE_H

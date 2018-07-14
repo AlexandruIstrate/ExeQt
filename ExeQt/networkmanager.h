@@ -22,6 +22,7 @@
 #include "saveable.h"
 
 class ActionReference;
+class SettingsRegistry;
 
 class Client : public QObject
 {
@@ -69,9 +70,10 @@ public:
 	static QNetworkInterface* getCurrentInterface();
 	static QString getCurrentIPAddress();
 
+	static QString getHardwareID();
+
 private:
 	QString generateID();
-	QString getHardwareID();
 
 signals:
 	void actionsUpdated(Bundle bundle);
@@ -193,6 +195,8 @@ signals:
 private slots:
 	void onBroadcastDatagram();
 	void onPendingDatagram();
+
+	void onSettingsUpdate(SettingsRegistry* settingsRegistry);
 };
 
 class ActionServer : public QObject

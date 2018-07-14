@@ -56,6 +56,10 @@ public:
 		return (Action*) getActionInternal();
 	}
 
+public:
+	bool operator==(const ActionReference&);
+	bool operator!=(const ActionReference&);
+
 private:
 	Action* getActionInternal() const;
 

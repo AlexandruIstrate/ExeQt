@@ -95,10 +95,15 @@ void ActionItem::setupUI()
 
 void ActionItem::setupActions()
 {
-	ui->cmbActionType->addItem(Action::getTypeName(Action::Type::COMMAND));
-	ui->cmbActionType->addItem(Action::getTypeName(Action::Type::APPLICATION));
-	ui->cmbActionType->addItem(Action::getTypeName(Action::Type::LINK));
-	ui->cmbActionType->addItem(Action::getTypeName(Action::Type::SET));
+	addComboAction(Action::Type::COMMAND);
+	addComboAction(Action::Type::APPLICATION);
+	addComboAction(Action::Type::LINK);
+	addComboAction(Action::Type::SET);
+}
+
+void ActionItem::addComboAction(Action::Type type)
+{
+	ui->cmbActionType->addItem(Action::getActionIcon(type), Action::getTypeName(type));
 }
 
 void ActionItem::setAction(Action::Type type)

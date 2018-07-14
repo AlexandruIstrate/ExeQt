@@ -20,8 +20,8 @@
 
 AuthManager* AuthManager::s_Instance = nullptr;
 
-#define PROPERTY_USER "user"
-#define PROPERTY_PASSWORD "pwd"
+#define PROPERTY_USER			"user"
+#define PROPERTY_PASSWORD		"pwd"
 
 AuthManager::AuthManager() : m_IsAuth { false }
 {

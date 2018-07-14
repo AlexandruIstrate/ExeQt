@@ -67,6 +67,9 @@ private:
 	void addAction(Action* action);
 	void removeAction(int index);
 
+	bool checkLinks(ActionList& previousItems);
+	bool checkRecursive();
+
 private slots:
 	void onUp();
 	void onDown();

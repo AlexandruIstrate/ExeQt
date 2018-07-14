@@ -38,20 +38,21 @@
 #include "networkmanager.h"
 
 #include "constants.h"
+#include "common.h"
 
 MainWidget* MainWidget::s_Instance = nullptr;
 
 MainWidget::MainWidget(QWidget* parent) :
 	QWidget(parent), ui(new Ui::MainWidget),
-	m_Settings { Constants::COMPANY_NAME, Constants::PRODUCT_NAME }, m_ShouldQuit { false }
+	m_ShouldQuit { false }
 {
 	s_Instance = this;
 	TaskManager::init();
 	NetworkManager::init();
 	ActionServer::start();
 
-	ui->setupUi(this);
 	setStyleSheet(StyleManager::instance()->getStyle());
+	ui->setupUi(this);
 
 	setupNetwork();
 	setupActions();
@@ -289,12 +290,12 @@ void MainWidget::saveToFile()
 	Bundle bundle(getTagName());
 	writeProperties(bundle);
 
-	bundle.saveToFile(m_SaveFile);
+	bundle.saveToFile(Common::getSaveFilePath());
 }
 
 void MainWidget::loadFromFile()
 {
-	Bundle bundle = Bundle::fromFile(m_SaveFile);
+	Bundle bundle = Bundle::fromFile(Common::getSaveFilePath());
 	readProperties(bundle);
 }
 
@@ -419,7 +420,7 @@ void MainWidget::onQuit()
 	saveToFile();
 
 	if (AuthManager::instance()->isAuth())
-		m_RequestManager->uploadFile(QUrl(Constants::getUploadPath()), m_SaveFile);
+		m_RequestManager->uploadFile(QUrl(Constants::getUploadPath()), Common::getSaveFilePath());
 	else
 		qApp->quit();
 

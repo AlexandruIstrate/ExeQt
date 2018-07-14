@@ -65,7 +65,8 @@ int SingleInstanceApplication::exec(QWidget* wdg)
 	if (m_OnStart)
 		m_OnStart();
 
-	wdg->show();
+	if (wdg)
+		wdg->show();
 
 	return m_App.exec();
 }

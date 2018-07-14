@@ -13,10 +13,12 @@
 #include <QApplication>
 #include <QMessageBox>
 
+#include <qtsingleapplication.h>
+
 #include "mainpage.h"
 #include "authmanager.h"
 #include "stylemanager.h"
-#include "singleinstanceapplication.h"
+#include "settingsregistry.h"
 
 #define WAKE_MESSAGE "Are you running, sweetheart?"
 
@@ -35,17 +37,28 @@ int main(int argc, char* argv[])
 {
 	try
 	{
+		SettingsRegistry::init();
 		AuthManager::init();
 
 		StyleManager::init();
 		StyleManager::instance()->setStyleFile(STYLE_FILE);
 
-		SingleInstanceApplication sng(argc, argv);
-		sng.setOnInstanceRunning(onInstanceRunning);
+		QtSingleApplication instance(argc, argv);
+		if (instance.sendMessage(WAKE_MESSAGE))
+		{
+			onInstanceRunning();
+			return 0;
+		}
+
+		instance.setQuitOnLastWindowClosed(false);
 
 		MainPage mp;
-		int result = sng.exec(&mp);
+		mp.show();
 
+		instance.setActivationWindow(&mp);
+		int result = instance.exec();
+
+		SettingsRegistry::terminate();
 		AuthManager::terminate();
 		StyleManager::terminate();
 

@@ -73,6 +73,17 @@ Action::Type ActionReference::getActionType() const
 	return Action::Type::UNKNOWN;
 }
 
+bool ActionReference::operator==(const ActionReference& other)
+{
+	return (this->m_ActionGroup == other.m_ActionGroup &&
+			this->m_ActionName == other.m_ActionName);
+}
+
+bool ActionReference::operator!=(const ActionReference& other)
+{
+	return !(*this == other);
+}
+
 Action* ActionReference::getActionInternal() const
 {
 	for (ActionTab* tab : MainWidget::instance()->getActionTabs())

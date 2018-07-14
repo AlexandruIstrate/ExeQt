@@ -86,6 +86,9 @@ void SetAction::writeProperties(Bundle& bundle)
 
 void SetAction::execute()
 {
+	if (!checkRecursive())
+		return;
+
 	for (Action* action : m_ActionList)
 		action->execute();
 }
@@ -121,6 +124,7 @@ void SetAction::setupUI()
 	connect(ui->btnAdd, &QPushButton::clicked, m_ActionAdd, &QAction::trigger);
 	connect(ui->btnRemove, &QPushButton::clicked, m_ActionRemove, &QAction::trigger);
 
+	// Create our custom ActionSetTree and add it to the GUI
 	m_ActionTree = new ActionSetTree(this);
 	ui->horizontalLayout->insertWidget(0, m_ActionTree);
 }
@@ -154,6 +158,41 @@ void SetAction::removeAction(int index)
 	m_ActionList.removeAt(index);
 }
 
+bool SetAction::checkLinks(ActionList& previousItems)
+{
+	for (Action* action : m_ActionList)
+	{
+		SetAction* setAction = dynamic_cast<SetAction*>(action);
+
+		if (!setAction)
+			continue;
+
+		if (previousItems.contains(setAction))
+			return false;
+
+		previousItems.append(setAction);
+
+		if (!setAction->checkLinks(previousItems))
+			return false;
+	}
+
+	return true;
+}
+
+bool SetAction::checkRecursive()
+{
+	QList<Action*> previousItems;
+
+	if (!checkLinks(previousItems))
+	{
+		QMessageBox::critical(nullptr, tr("Recursive Reference"), tr("The Action Set \"%1\" contains a circular reference.\n"
+																	 "This would cause an infinite execution loop!").arg(previousItems.last()->getName()));
+		return false;
+	}
+
+	return true;
+}
+
 void SetAction::onUp()
 {
 	m_ActionTree->moveRowUp();
@@ -184,6 +223,8 @@ void SetAction::onRowsUpdated(ActionReferenceList rowReffList)
 		if (action)
 			addAction(action);
 	}
+
+	checkRecursive();
 }
 
 void SetAction::onRunTask()

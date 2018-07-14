@@ -22,6 +22,7 @@
 #include "networkmessage.h"
 #include "actionreference.h"
 #include "mainwidget.h"
+#include "settingsregistry.h"
 
 #define PORT						45454
 #define TIMER_INTERVAL				1000
@@ -41,7 +42,7 @@
 // Client
 
 Client::Client()
-	: m_Name { MainWidget::instance()->getSettings().value(Constants::SETTING_KEY_CLIENT_NAME).toString() }, m_ID { generateID() }, m_Address { getCurrentIPAddress() }
+	: m_Name { SettingsRegistry::instance()->get(Settings::USERNAME).toString() }, m_ID { generateID() }, m_Address { getCurrentIPAddress() }
 {
 
 }
@@ -160,7 +161,7 @@ QNetworkInterface* Client::getCurrentInterface()
 
 QString Client::getCurrentIPAddress()
 {
-	for (const QHostAddress& address : QNetworkInterface::allAddresses())
+	for (QHostAddress address : QNetworkInterface::allAddresses())
 	{
 		if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost))
 			 return address.toString();
@@ -169,15 +170,15 @@ QString Client::getCurrentIPAddress()
 	return QString();
 }
 
+QString Client::getHardwareID()
+{
+	return getCurrentInterface() ? getCurrentInterface()->hardwareAddress() : QString("DefaultID");
+}
+
 QString Client::generateID()
 {
 	// BUG: This causes the app to crash sometimes for some reason
-	return QString(QCryptographicHash::hash(getHardwareID().toLatin1(), QCryptographicHash::Md5).toHex());
-}
-
-QString Client::getHardwareID()
-{
-	return getCurrentInterface() ? getCurrentInterface()->hardwareAddress() : QString();
+	return QString(QCryptographicHash::hash(getHardwareID().toUtf8(), QCryptographicHash::Md5).toHex());
 }
 
 void Client::onReadyRead()
@@ -271,6 +272,22 @@ NetworkManager::NetworkManager() : m_WritableSocket {  }, m_State { State::IDLE 
 
 NetworkManager::~NetworkManager()
 {
+	while (m_ConnectedTo.size() > 0)
+	{
+		int index = m_ConnectedTo.size() - 1;
+
+		m_ConnectedTo[index].disconnectFromHost();
+		m_ConnectedTo.removeAt(index);
+	}
+
+	while (m_ConnectedFrom.size() > 0)
+	{
+		int index = m_ConnectedFrom.size() - 1;
+
+		m_ConnectedFrom[index].disconnectFromHost();
+		m_ConnectedFrom.removeAt(index);
+	}
+
 	delete m_ThisClient;
 }
 
@@ -482,6 +499,11 @@ void NetworkManager::onPendingDatagram()
 		Client client(message.getProperty(JSON_KEY_NAME), message.getProperty(JSON_KEY_ID), stripAddress(address.toString()));
 		emit clientAvailable(client);
 	}
+}
+
+void NetworkManager::onSettingsUpdate(SettingsRegistry* settingsRegistry)
+{
+	m_ThisClient->setName(settingsRegistry->get(Settings::USERNAME).toString());
 }
 
 // Server

@@ -52,6 +52,7 @@ private:
 	void setupUI();
 
 	void setupActions();
+	void addComboAction(Action::Type);
 	void setAction(Action::Type);
 	void setAction(Action*);
 	void setActionWidget();

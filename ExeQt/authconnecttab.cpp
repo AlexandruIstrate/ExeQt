@@ -139,7 +139,7 @@ void AuthConnectTab::onBroadcast()
 void AuthConnectTab::onClientAvailable(Client client)
 {
 	// If the client is not the current device
-	if (*NetworkManager::instance()->getThisClient() == client)
+	if (NetworkManager::instance()->getThisClient()->getLocalizedName() == client.getLocalizedName())
 		return;
 
 	// If already connected, skip it

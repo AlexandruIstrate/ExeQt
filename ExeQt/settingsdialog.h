@@ -29,12 +29,19 @@ public:
 
 private:
 	void setupUI();
+	void setupSignalsAndSlots();
 
 	void writeSettings();
 	void updateInternalSettings();
 
+	void setUIPathState(bool ok);
+
 public slots:
 	void accept() override;
+
+private slots:
+	void onBrowse();
+	void onSavePathChanged(const QString& newPath);
 };
 
 #endif // SETTINGSDIALOG_H
