@@ -52,6 +52,10 @@ You must first have the GNU compiler (gcc) and the Qt Toolkit installed on your 
 
 - **Linux:** The project must be first built using the qMake script (or the QtCreator IDE) and then if you want to create a standalone executable you must use the tool [linuxdeployqt](https://github.com/probonopd/linuxdeployqt) which creates an AppImage so that you can run ExeQt on a system without having Qt installed
 
+## Libraries used
+- Qt Toolkit
+- [qtsingleapplication](https://github.com/qtproject/qt-solutions/tree/master/qtsingleapplication) from the [qt-solutions](https://github.com/qtproject/qt-solutions) project
+
 ## Disclaimer
 I do not own any of the icons used in this project. I thank the wonderful people at [findicons.com](findicons.com) and [iconarchive.com](iconarchive.com) for making these available to the public for free.
 My thanks to the Canonical team for providing beautiful desktop wallpapers for their Ubuntu operating system.
