@@ -19,11 +19,11 @@ bool Saveable::checkProperty(const Bundle &bundle, const QString &propertyName) 
 	if (!bundle.get(propertyName).isEmpty())
 		return true;
 
-	QMessageBox::critical(nullptr, QWidget::tr("XML Parse Error"), QWidget::tr("Property \"") + propertyName + QWidget::tr("\" not found for tag \"") + getTagName() + QWidget::tr("\"."));
+//	QMessageBox::critical(nullptr, QWidget::tr("XML Parse Error"), QWidget::tr("Property \"") + propertyName + QWidget::tr("\" not found for tag \"") + getTagName() + QWidget::tr("\"."));
 	return false;
 }
 
-bool Saveable::checkBundle(const Bundle& bundle) const
+bool Saveable::checkBundle(const Bundle&) const
 {
 //	if (bundle.getName() != getTagName())
 //	{

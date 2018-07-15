@@ -65,8 +65,8 @@ bool ActionTab::checkBundle(const Bundle& bundle) const
 
 void ActionTab::readProperties(Bundle& bundle)
 {
-	if (!checkBundle(bundle))
-		return;
+//	if (!checkBundle(bundle))
+//		return;
 
 	m_Name = bundle.get(NAME_PROPERTY);
 	m_Icon = AddGroupDialog::getIconByName(bundle.get(ICON_PROPERTY));

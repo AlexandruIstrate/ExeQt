@@ -187,7 +187,8 @@ Bundle Bundle::fromXML(const QString& xml)
 Bundle Bundle::fromFile(const QString& fileName)
 {
 	QString text;
-	Common::readFromFile(fileName, text);
+	if (!Common::readFromFile(fileName, text))
+		text = "<mainwidget><mainwidget/>";
 
 	return Bundle::fromXML(text);
 }
