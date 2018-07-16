@@ -67,7 +67,7 @@ public:
 
 	Client& operator=(const Client&);
 
-	static QNetworkInterface* getCurrentInterface();
+	static QNetworkInterface getCurrentInterface();
 	static QString getCurrentIPAddress();
 
 	static QString getHardwareID();
