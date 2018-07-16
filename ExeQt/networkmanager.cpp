@@ -148,15 +148,15 @@ Client& Client::operator=(const Client& other)
 	return *this;
 }
 
-QNetworkInterface* Client::getCurrentInterface()
+QNetworkInterface Client::getCurrentInterface()
 {
 	for (QNetworkInterface& interface : QNetworkInterface::allInterfaces())
 	{
 		if (!(interface.flags() & QNetworkInterface::IsLoopBack))
-			return &interface;
+			return interface;
 	}
 
-	return nullptr;
+	return QNetworkInterface();
 }
 
 QString Client::getCurrentIPAddress()
@@ -172,12 +172,11 @@ QString Client::getCurrentIPAddress()
 
 QString Client::getHardwareID()
 {
-	return getCurrentInterface() ? getCurrentInterface()->hardwareAddress() : QString("DefaultID");
+	return getCurrentInterface().hardwareAddress();
 }
 
 QString Client::generateID()
 {
-	// BUG: This causes the app to crash sometimes for some reason
 	return QString(QCryptographicHash::hash(getHardwareID().toUtf8(), QCryptographicHash::Md5).toHex());
 }
 

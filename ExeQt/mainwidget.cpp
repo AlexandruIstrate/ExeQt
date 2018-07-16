@@ -47,8 +47,8 @@ MainWidget::MainWidget(QWidget* parent) :
 	m_ShouldQuit { false }
 {
 	s_Instance = this;
-	TaskManager::init();
 	NetworkManager::init();
+	TaskManager::init();
 	ActionServer::start();
 
 	setStyleSheet(StyleManager::instance()->getStyle());
