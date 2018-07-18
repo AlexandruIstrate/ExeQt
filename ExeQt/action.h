@@ -55,6 +55,7 @@ public:
 
 public:
 	static Action* create(Type type, QWidget* parent = nullptr);
+	static Action* createFromTagName(const QString& tagName, QWidget* parent = nullptr);
 
 	static QIcon getActionIcon(Type type);
 	static QIcon getActionIcon(const QString& tag);

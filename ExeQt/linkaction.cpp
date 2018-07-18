@@ -45,8 +45,8 @@ bool LinkAction::checkBundle(const Bundle& bundle) const
 	if (!Action::checkBundle(bundle))
 		return false;
 
-	if (!checkProperty(bundle, LINK_PROPERTY))
-		return false;
+//	if (!checkProperty(bundle, LINK_PROPERTY))
+//		return false;
 
 	return true;
 }

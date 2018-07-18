@@ -17,7 +17,7 @@
 
 #include "mainwidget.h"
 
-#define ACTION_TYPE_PROPERTY "actionType"
+#define ACTION_TYPE_PROPERTY "type"
 
 #define CHILDREN_COUNT 1
 
@@ -42,17 +42,8 @@ QString ActionItem::getTagName() const
 	return QString("actionItem");
 }
 
-bool ActionItem::checkBundle(const Bundle& bundle) const
+bool ActionItem::checkBundle(const Bundle&) const
 {
-	if (!checkProperty(bundle, ACTION_TYPE_PROPERTY))
-		return false;
-
-	if (bundle.getChildrenCount() != CHILDREN_COUNT)
-	{
-		QMessageBox::critical(nullptr, tr("XML Parse Error"), tr("The action item \"%1\" doesn't have the right number of children (%2)!").arg(getName(), QString::number(CHILDREN_COUNT)));
-		return false;
-	}
-
 	return true;
 }
 
@@ -61,10 +52,8 @@ void ActionItem::readProperties(Bundle& bundle)
 	if (!checkBundle(bundle))
 		return;
 
-	Action::Type type = (Action::Type) bundle.get(ACTION_TYPE_PROPERTY).toInt();
-
-	Action* action = Action::create(type, this);
-	action->readProperties(bundle.childAt(0));
+	Action* action = Action::createFromTagName(bundle.getName(), this);
+	action->readProperties(bundle);
 
 	ui->cmbActionType->setCurrentIndex((int) action->getType());    // Here, we make sure we have the right type set
 	setAction(action);
@@ -74,11 +63,7 @@ void ActionItem::readProperties(Bundle& bundle)
 
 void ActionItem::writeProperties(Bundle& bundle)
 {
-	bundle.add(ACTION_TYPE_PROPERTY, QString::number((int) m_Action->getType()));
-
-	Bundle child(m_Action->getTagName());
-	m_Action->writeProperties(child);
-	bundle.addChild(child);
+	m_Action->writeProperties(bundle);
 }
 
 void ActionItem::setupSignalsAndSlots()

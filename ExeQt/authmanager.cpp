@@ -17,11 +17,14 @@
 #include <QJsonObject>
 
 #include "constants.h"
-
-AuthManager* AuthManager::s_Instance = nullptr;
+#include "common.h"
+#include "bundle.h"
+#include "mainwidget.h"
 
 #define PROPERTY_USER			"user"
 #define PROPERTY_PASSWORD		"pwd"
+
+AuthManager* AuthManager::s_Instance = nullptr;
 
 AuthManager::AuthManager() : m_IsAuth { false }
 {
@@ -42,6 +45,14 @@ void AuthManager::authenticate(const QString& userName, const QString& password)
 	m_RequestManager->sendRequest(Constants::getAuthPath(), query, RequestManager::RequestType::POST);
 }
 
+void AuthManager::syncActions()
+{
+	connect(m_RequestManager, &RequestManager::requestFinished, this, &AuthManager::onFileSyncFinished);
+
+	QString url = RequestManager::buildUrl(Constants::getDownloadPath(), AuthManager::instance()->getToken());
+	m_RequestManager->downloadFile(url);
+}
+
 void AuthManager::init()
 {
 	s_Instance = new AuthManager();
@@ -55,16 +66,16 @@ void AuthManager::terminate()
 void AuthManager::setupNetwork()
 {
 	m_RequestManager = new RequestManager();
-	connect(m_RequestManager, SIGNAL(requestFinished(QNetworkReply*, bool)), this, SLOT(onRequestFinished(QNetworkReply*, bool)));
+	connect(m_RequestManager, &RequestManager::requestFinished, this, &AuthManager::onLoginFinished);
 }
 
-void AuthManager::parseResponse(const QString& response)
+void AuthManager::parseLoginResponse(const QString& response)
 {
 	QJsonDocument doc(QJsonDocument::fromJson(response.toUtf8()));
 
 	QJsonObject jsonObj = doc.object();
-	int flag = jsonObj["flag"].toInt();
-	QString message = jsonObj["msg"].toString();
+	int flag = jsonObj[Constants::JSON_PROPERTY_FLAG].toInt();
+	QString message = jsonObj[Constants::JSON_PROPERTY_MESSSAGE].toString();
 
 	if (flag == 0)
 	{
@@ -77,7 +88,49 @@ void AuthManager::parseResponse(const QString& response)
 	}
 }
 
-void AuthManager::onRequestFinished(QNetworkReply* reply, bool timedOut)
+Bundle getActionBundle(const QString& saveFile)
+{
+	MainWidget* mw = MainWidget::instance();
+
+	if (mw)	// If it's not null, then it means we are accessing this trough the main app and not from the start page
+	{
+		Bundle result;
+		mw->writeProperties(result);
+
+		return result;
+	}
+
+	return Bundle::fromFile(saveFile);
+}
+
+QString AuthManager::parseSyncActions(const QString& jsonText)
+{
+	QJsonDocument doc(QJsonDocument::fromJson(jsonText.toUtf8()));
+
+	QJsonObject jsonObj = doc.object();
+	int flag = jsonObj[Constants::JSON_PROPERTY_FLAG].toInt();
+	QString message = jsonObj[Constants::JSON_PROPERTY_MESSSAGE].toString();
+
+	if (flag == Constants::FLAG_OK)
+	{
+		const QString SAVE_FILE = Common::getSaveFilePath();
+
+		Bundle webBundle = Bundle::fromXML(message);
+//		Bundle localBundle = Bundle::fromFile(SAVE_FILE);
+		Bundle localBundle = getActionBundle(SAVE_FILE);
+
+		Bundle merged = Bundle::mergeBundles(webBundle, localBundle);
+		merged.saveToFile(SAVE_FILE);
+	}
+	else
+	{
+		QMessageBox::critical(nullptr, tr("Download failed"), message);
+	}
+
+	return message;
+}
+
+void AuthManager::onLoginFinished(QNetworkReply* reply, bool timedOut)
 {
 	if (timedOut)
 	{
@@ -91,7 +144,28 @@ void AuthManager::onRequestFinished(QNetworkReply* reply, bool timedOut)
 		return;
 	}
 
-//    QMessageBox::information(this, tr("Info"), reply->readAll());
-	parseResponse(reply->readAll());
-	emit done();
+	disconnect(m_RequestManager, &RequestManager::requestFinished, this, &AuthManager::onLoginFinished);
+
+	parseLoginResponse(reply->readAll());
+	emit doneLogin();
+}
+
+void AuthManager::onFileSyncFinished(QNetworkReply* reply, bool timedOut)
+{
+	if (timedOut)
+	{
+		QMessageBox::critical(nullptr, tr("Timed Out"), tr("Request timed out."));
+		return;
+	}
+
+	if (reply->error() != QNetworkReply::NetworkError::NoError)
+	{
+		QMessageBox::critical(nullptr, tr("Error"), reply->errorString());
+		return;
+	}
+
+	disconnect(m_RequestManager, &RequestManager::requestFinished, this, &AuthManager::onFileSyncFinished);
+
+	parseSyncActions(reply->readAll());
+	emit doneSync();
 }

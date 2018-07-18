@@ -26,27 +26,20 @@ class LoginDialog : public QDialog
 private:
 	Ui::LoginDialog* ui;
 
-	RequestManager* m_RequestManager;
-
 public:
 	LoginDialog(QWidget* parent = nullptr);
 	~LoginDialog();
 
 private:
-	void setupNetwork();
 	void setupSignalsAndSlots();
 
 	QString parseJsonMessage(const QString& jsonText);
 
-signals:
-	void doneLogin();
-	void doneFileDownload();
-
 private slots:
 	void onLogIn();
-	void onLoginDone();
 
-	void onRequestFinished(QNetworkReply* reply, bool timedOut);
+	void onLoginDone();
+	void onSyncDone();
 };
 
 #endif // LOGINDIALOG_H
