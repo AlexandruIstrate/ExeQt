@@ -42,6 +42,11 @@ void Bundle::addChild(Bundle bundle)
 	m_Children.append(bundle);
 }
 
+void Bundle::setChildAt(int index, const Bundle& child)
+{
+	m_Children[index] = child;
+}
+
 Bundle& Bundle::childAt(int index)
 {
 	return m_Children[index];
@@ -52,48 +57,26 @@ const Bundle& Bundle::childAt(int index) const
 	return m_Children.at(index);
 }
 
-void Bundle::setChildAt(int index, const Bundle& child)
-{
-	m_Children[index] = child;
-}
-
 bool Bundle::hasKey(const QString& key) const
 {
 	return m_Values.contains(key);
 }
 
-bool Bundle::equals(const Bundle& other) const
+bool Bundle::hasChild(const Bundle& child) const
 {
-	return (m_Name == other.m_Name) && (m_Values == other.m_Values);
+	return m_Children.contains(child);
 }
 
-bool bundleEquals(const Bundle& bundle1, const Bundle& bundle2)
+QString Bundle::toText() const
 {
-	if (!bundle1.equals(bundle2))
-		return false;
+	QString text = QString("Bundle : %1 { ").arg(m_Name);
 
-	if (bundle1.getChildrenCount() != bundle2.getChildrenCount())
-		return false;
+	for (ValueMap::const_iterator iter = m_Values.constBegin(); iter != m_Values.constEnd(); ++iter)
+		text.append(QString("%1 : %2; ").arg(iter.key(), iter.value()));
 
-	for (int i = 0; i < bundle1.getChildrenCount(); ++i)
-	{
-		const Bundle& b1 = bundle1.childAt(i);
+	text.append("}");
 
-		for (int j = 0; j < bundle2.getChildrenCount(); ++j)
-		{
-			const Bundle& b2 = bundle2.childAt(j);
-
-			if (!b1.equals(b2) && j == bundle2.getChildrenCount() - 1)	// Reached the last item and we haven't found a match
-				return false;
-		}
-	}
-
-	return true;
-}
-
-bool Bundle::strongEquals(const Bundle& other) const
-{
-	return bundleEquals(*this, other);
+	return text;
 }
 
 void writeXMLBundle(Bundle bundle, QXmlStreamWriter& writer)
@@ -140,6 +123,22 @@ bool Bundle::saveToFile(const QString& filePath) const
 	file.close();
 
 	return true;
+}
+
+bool Bundle::operator==(const Bundle& other) const
+{
+	return (m_Name == other.m_Name) && (m_Values == other.m_Values)/* && (m_Children == other.m_Children)*/;
+}
+
+bool Bundle::operator!=(const Bundle& other) const
+{
+	return !(*this == other);
+}
+
+QDataStream& operator<<(QDataStream& stream, const Bundle& bundle)
+{
+	stream << QString("Bundle : {%1}").arg(bundle.getName());
+	return stream;
 }
 
 Bundle Bundle::from(const Bundle& source)
@@ -193,44 +192,28 @@ Bundle Bundle::fromFile(const QString& fileName)
 	return Bundle::fromXML(text);
 }
 
-Bundle combineBundles(const Bundle& bundle1, const Bundle& bundle2)
-{
-	/*
-	 *	1. Take each node of a bundle
-	 *	2. Check to see if it exists in the other one (yes - compare further down with recursion; no - go to the next node)
-	 */
-
-	Bundle ret = Bundle::from(bundle1);
-
-	for (const Bundle& b1 : bundle1.getChildren())
-		ret.addChild(b1);
-
-	for (const Bundle& b2 : bundle2.getChildren())
-	{
-		// Find correct node
-		bool found = false;
-
-		for (int i = 0; i < ret.getChildrenCount(); ++i)
-		{
-			const Bundle& b1 = ret.childAt(i);
-
-			if (b1.strongEquals(b2))	// Found this node in the other tree
-			{
-				ret.setChildAt(i, combineBundles(b1, b2));
-
-				found = true;
-				break;
-			}
-		}
-
-		if (!found)
-			ret.addChild(b2);
-	}
-
-	return ret;
-}
-
 Bundle Bundle::mergeBundles(const Bundle& bundle1, const Bundle& bundle2)
 {
-	return combineBundles(bundle1, bundle2);
+	Bundle result(bundle1);
+
+	for (const Bundle& bundle : bundle2.getChildren())
+	{
+		if (!result.hasChild(bundle))
+		{
+			result.addChild(bundle);
+			continue;
+		}
+
+		for (int i = 0; i < result.getChildrenCount(); ++i)
+		{
+			const Bundle& resultBundle = result.childAt(i);
+
+			if (bundle == resultBundle)
+			{
+				result.setChildAt(i, mergeBundles(resultBundle, bundle));
+			}
+		}
+	}
+
+	return result;
 }

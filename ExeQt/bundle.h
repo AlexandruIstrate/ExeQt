@@ -31,8 +31,10 @@ public:
 	inline const QString& getName() const { return m_Name; }
 	inline void setName(const QString& name) { m_Name = name; }
 
-	inline const QList<Bundle>& getChildren() const { return m_Children; }
 	inline const ValueMap& getValues() const { return m_Values; }
+
+	inline const QList<Bundle>& getChildren() const { return m_Children; }
+	inline void setChildren(const QList<Bundle> children) { m_Children = children; }
 
 	inline int getChildrenCount() const { return m_Children.size(); }
 
@@ -41,20 +43,24 @@ public:
 	QString get(const QString& key) const;
 
 	void addChild(Bundle bundle);
+	void setChildAt(int index, const Bundle& child);
 
 	Bundle& childAt(int index);
 	const Bundle& childAt(int index) const;
 
-	void setChildAt(int index, const Bundle& child);
-
 	bool hasKey(const QString& key) const;
+	bool hasChild(const Bundle&) const;
 
-	bool equals(const Bundle&) const;
-	bool strongEquals(const Bundle&) const;
-
+	QString toText() const;
 	QString toXML() const;
 
 	bool saveToFile(const QString& filePath) const;
+
+public:
+	bool operator==(const Bundle& other) const;
+	bool operator!=(const Bundle& other) const;
+
+	friend QDataStream& operator<<(QDataStream&, const Bundle&);
 
 public:
 	static Bundle from(const Bundle&);

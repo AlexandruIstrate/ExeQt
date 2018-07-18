@@ -56,7 +56,7 @@
    <item alignment="Qt::AlignHCenter">
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Version 1.2 © 2018&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Created by Alexandru Istrate&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;Version 1.2.1 © 2018&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;Created by Alexandru Istrate&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
     </widget>
    </item>

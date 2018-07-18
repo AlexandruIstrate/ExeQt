@@ -382,6 +382,10 @@ void MainWidget::onSyncSelected()
 		if (loginDialog->exec() != QDialog::DialogCode::Accepted)
 			return;
 	}
+	else
+	{
+		AuthManager::instance()->syncActions();
+	}
 
 	removeTabs();
 	setupTabs();
@@ -393,9 +397,6 @@ void MainWidget::onSyncSelected()
 
 void MainWidget::onRemoteControlSelected()
 {
-//	RemoteControl* remoteControl = new RemoteControl(this);
-//	remoteControl->exec();
-
 	m_RemoteControlDialog->exec();
 }
 
@@ -413,6 +414,9 @@ void MainWidget::onSettingsSelected()
 
 void MainWidget::onQuit()
 {
+	if (m_ShouldQuit)	// The user has already selected "Quit". We are now waiting for the cloud sync to finish.
+		return;
+
 	QMessageBox dialog(QMessageBox::Icon::Question, tr("Exit"), tr("Are you sure you want to exit?"), QMessageBox::Yes | QMessageBox::No);
 	if (dialog.exec() == QMessageBox::No)
 		return;
@@ -420,9 +424,14 @@ void MainWidget::onQuit()
 	saveToFile();
 
 	if (AuthManager::instance()->isAuth())
-		m_RequestManager->uploadFile(QUrl(Constants::getUploadPath()), Common::getSaveFilePath());
+	{
+		m_TrayIcon->showMessage(tr("Closing down..."), tr("ExeQt is saving your actions to the cloud an will close in a few moments..."));
+		m_RequestManager->uploadFile(QUrl(Constants::getUploadPath()), Common::getSaveFilePath());	// Overwrite old cloud file with new one
+	}
 	else
+	{
 		qApp->quit();
+	}
 
 	quitLater();
 }

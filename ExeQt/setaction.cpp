@@ -48,8 +48,11 @@ QString SetAction::getDescription() const
 	return tr("A Set Action represents a set of actions that can be called together.");
 }
 
-bool SetAction::checkBundle(const Bundle&) const
+bool SetAction::checkBundle(const Bundle& bundle) const
 {
+	if (!Action::checkBundle(bundle))
+		return false;
+
 	return true;
 }
 

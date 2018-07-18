@@ -47,7 +47,7 @@ bool Action::checkBundle(const Bundle& bundle) const
 	if (!Saveable::checkBundle(bundle))
 		return false;
 
-	if (!checkProperty(bundle, NAME_PROPERTY) || !checkProperty(bundle, TYPE_PROPERTY))
+	if (!checkProperty(bundle, NAME_PROPERTY))
 		return false;
 
 	return true;
@@ -59,13 +59,12 @@ void Action::readProperties(Bundle& bundle)
 		return;
 
 	m_Name = bundle.get(NAME_PROPERTY);
-	m_Type = (Type) bundle.get(TYPE_PROPERTY).toInt();
+	m_Type = getActionTypeFromTag(bundle.getName());
 }
 
 void Action::writeProperties(Bundle& bundle)
 {
 	bundle.add(NAME_PROPERTY, m_Name);
-	bundle.add(TYPE_PROPERTY, QString::number((int) m_Type));
 }
 
 Action* Action::create(Type type, QWidget* parent)
@@ -87,6 +86,11 @@ Action* Action::create(Type type, QWidget* parent)
 	default:
 		return nullptr;
 	}
+}
+
+Action* Action::createFromTagName(const QString& tagName, QWidget* parent)
+{
+	return create(getActionTypeFromTag(tagName), parent);
 }
 
 QIcon Action::getActionIcon(Action::Type type)

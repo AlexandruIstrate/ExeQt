@@ -37,6 +37,7 @@ public:
 	inline bool isAuth() const { return m_IsAuth; }
 
 	void authenticate(const QString& userName, const QString& password);
+	void syncActions();
 
 public:
 	inline static AuthManager* instance() { return s_Instance; }
@@ -47,13 +48,16 @@ public:
 private:
 	void setupNetwork();
 
-	void parseResponse(const QString&);
+	void parseLoginResponse(const QString&);
+	QString parseSyncActions(const QString&);
 
 signals:
-	void done();
+	void doneLogin();
+	void doneSync();
 
 private slots:
-	void onRequestFinished(QNetworkReply* reply, bool timedOut);
+	void onLoginFinished(QNetworkReply* reply, bool timedOut);
+	void onFileSyncFinished(QNetworkReply* reply, bool timedOut);
 };
 
 #endif // AUTHMANAGER_H

@@ -50,8 +50,8 @@ bool ApplicationAction::checkBundle(const Bundle& bundle) const
 	if (!Action::checkBundle(bundle))
 		return false;
 
-	if (!checkProperty(bundle, APP_PATH_PROPERTY))
-		return false;
+//	if (!checkProperty(bundle, APP_PATH_PROPERTY))
+//		return false;
 
 	return true;
 }

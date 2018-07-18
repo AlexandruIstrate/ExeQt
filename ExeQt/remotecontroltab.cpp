@@ -36,8 +36,8 @@ TreeItem::TreeItem(ActionReference* reference, const QString& name)
 
 TreeItem::~TreeItem()
 {
-//	if (m_ActionReference)
-//		delete m_ActionReference;
+	if (m_ActionReference)
+		delete m_ActionReference;
 }
 
 void TreeItem::setItemName(TreeItem::Type type)

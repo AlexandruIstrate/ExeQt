@@ -63,6 +63,38 @@ bool ActionTab::checkBundle(const Bundle& bundle) const
 	return true;
 }
 
+//void ActionTab::readProperties(Bundle& bundle)
+//{
+////	if (!checkBundle(bundle))
+////		return;
+
+//	m_Name = bundle.get(NAME_PROPERTY);
+//	m_Icon = AddGroupDialog::getIconByName(bundle.get(ICON_PROPERTY));
+//	m_TrayIcon->setIcon(m_Icon.icon);
+
+//	for (int i = 0; i < bundle.getChildrenCount(); ++i)
+//	{
+//		ActionItem* action = new ActionItem(this);
+//		action->readProperties(bundle.childAt(i));
+
+//		addAction(action);
+//	}
+//}
+
+//void ActionTab::writeProperties(Bundle& bundle)
+//{
+//	bundle.add(NAME_PROPERTY, m_Name);
+//	bundle.add(ICON_PROPERTY, m_Icon.name);
+
+//	for (ActionItem* item : m_ActionItems)
+//	{
+//		Bundle child(item->getTagName());
+//		item->writeProperties(child);
+
+//		bundle.addChild(child);
+//	}
+//}
+
 void ActionTab::readProperties(Bundle& bundle)
 {
 //	if (!checkBundle(bundle))
@@ -88,7 +120,7 @@ void ActionTab::writeProperties(Bundle& bundle)
 
 	for (ActionItem* item : m_ActionItems)
 	{
-		Bundle child(item->getTagName());
+		Bundle child(item->getAction()->getTagName());
 		item->writeProperties(child);
 
 		bundle.addChild(child);
