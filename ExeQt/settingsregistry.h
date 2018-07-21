@@ -15,9 +15,11 @@
 
 namespace Settings
 {
-	const QString SAVE_PATH = QString("savePath");
+	const QString SAVE_PATH = "savePath";
 	const QString CLOUD_SYNC_ADDRESS = "cloudSyncAddress";
 	const QString USERNAME = "username";
+	const QString SHOW_MAIN_PAGE = "showMainPage";
+	const QString CONFIRM_DELETE = "confirmDelete";
 }
 
 class SettingsRegistry : public QObject

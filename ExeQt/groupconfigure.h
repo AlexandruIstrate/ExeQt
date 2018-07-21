@@ -42,9 +42,12 @@ private:
 	void setupActions();
 	void setupSignalsAndSlots();
 	void setupUI();
+	void setupDialogButtons();
 
 	int getSelectedItem();
 	void showActionGroups();
+
+	bool checkDelete();
 
 private slots:
 	void onAdd();

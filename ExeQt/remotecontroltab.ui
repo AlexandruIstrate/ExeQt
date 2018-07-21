@@ -28,10 +28,16 @@
      <property name="text">
       <string>Run</string>
      </property>
+     <property name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/assets/images/button-icons/run.png</normaloff>:/assets/images/button-icons/run.png</iconset>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

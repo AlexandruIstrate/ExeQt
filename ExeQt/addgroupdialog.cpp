@@ -11,6 +11,7 @@
 #include "ui_addgroupdialog.h"
 
 #include <QDebug>
+#include <QPushButton>
 
 #define IMAGE_ASSET_RES ":/assets/images/group-icons/512"
 
@@ -22,7 +23,7 @@ AddGroupDialog::AddGroupDialog(QWidget* parent) :
 	ui(new Ui::AddGroupDialog)
 {
 	ui->setupUi(this);
-	initUI();
+	setupUI();
 }
 
 AddGroupDialog::AddGroupDialog(ActionTab* tab) : AddGroupDialog { (QWidget*) tab }
@@ -77,9 +78,16 @@ AppIcon AddGroupDialog::getIconByName(const QString& name)
 	return AppIcon(s_Icons[0], name);
 }
 
-void AddGroupDialog::initUI()
+void AddGroupDialog::setupUI()
 {
+	setupDialogButtons();
 	setupIcons();
+}
+
+void AddGroupDialog::setupDialogButtons()
+{
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setIcon(QIcon(":/assets/images/button-icons/ok.png"));
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Cancel)->setIcon(QIcon(":/assets/images/button-icons/cancel.png"));
 }
 
 void AddGroupDialog::addIcon(const QIcon& icon, const QString& name)

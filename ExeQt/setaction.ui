@@ -23,12 +23,20 @@
          <property name="text">
           <string>Up</string>
          </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/assets/images/button-icons/arrow-up.png</normaloff>:/assets/images/button-icons/arrow-up.png</iconset>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="btnDown">
          <property name="text">
           <string>Down</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/assets/images/button-icons/arrow-down.png</normaloff>:/assets/images/button-icons/arrow-down.png</iconset>
          </property>
         </widget>
        </item>
@@ -50,12 +58,20 @@
          <property name="text">
           <string>Add</string>
          </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/assets/images/button-icons/add.png</normaloff>:/assets/images/button-icons/add.png</iconset>
+         </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="btnRemove">
          <property name="text">
           <string>Remove</string>
+         </property>
+         <property name="icon">
+          <iconset resource="resources.qrc">
+           <normaloff>:/assets/images/button-icons/remove.png</normaloff>:/assets/images/button-icons/remove.png</iconset>
          </property>
         </widget>
        </item>
@@ -65,6 +81,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -74,10 +74,10 @@ void AuthManager::parseLoginResponse(const QString& response)
 	QJsonDocument doc(QJsonDocument::fromJson(response.toUtf8()));
 
 	QJsonObject jsonObj = doc.object();
-	int flag = jsonObj[Constants::JSON_PROPERTY_FLAG].toInt();
-	QString message = jsonObj[Constants::JSON_PROPERTY_MESSSAGE].toString();
+	int flag = jsonObj.value(Constants::JSON_PROPERTY_FLAG).toInt();
+	QString message = jsonObj.value(Constants::JSON_PROPERTY_MESSSAGE).toString();
 
-	if (flag == 0)
+	if (flag == Constants::FLAG_OK)
 	{
 		m_Token = message;
 		m_IsAuth = true;
@@ -94,7 +94,7 @@ Bundle getActionBundle(const QString& saveFile)
 
 	if (mw)	// If it's not null, then it means we are accessing this trough the main app and not from the start page
 	{
-		Bundle result;
+		Bundle result(mw->getTagName());
 		mw->writeProperties(result);
 
 		return result;
@@ -108,15 +108,14 @@ QString AuthManager::parseSyncActions(const QString& jsonText)
 	QJsonDocument doc(QJsonDocument::fromJson(jsonText.toUtf8()));
 
 	QJsonObject jsonObj = doc.object();
-	int flag = jsonObj[Constants::JSON_PROPERTY_FLAG].toInt();
-	QString message = jsonObj[Constants::JSON_PROPERTY_MESSSAGE].toString();
+	int flag = jsonObj.value(Constants::JSON_PROPERTY_FLAG).toInt();
+	QString message = jsonObj.value(Constants::JSON_PROPERTY_MESSSAGE).toString();
 
 	if (flag == Constants::FLAG_OK)
 	{
 		const QString SAVE_FILE = Common::getSaveFilePath();
 
 		Bundle webBundle = Bundle::fromXML(message);
-//		Bundle localBundle = Bundle::fromFile(SAVE_FILE);
 		Bundle localBundle = getActionBundle(SAVE_FILE);
 
 		Bundle merged = Bundle::mergeBundles(webBundle, localBundle);

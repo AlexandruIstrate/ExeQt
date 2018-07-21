@@ -70,6 +70,8 @@ public:
 
 	void removeTrayIcon();
 
+	bool checkDelete();
+
 private:
 	void setupActions();
 	void setupSignalsAndSlots();

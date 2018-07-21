@@ -198,6 +198,8 @@ Bundle Bundle::mergeBundles(const Bundle& bundle1, const Bundle& bundle2)
 
 	for (const Bundle& bundle : bundle2.getChildren())
 	{
+//		qDebug() << "Bundle 2: " << bundle.toText();
+
 		if (!result.hasChild(bundle))
 		{
 			result.addChild(bundle);
@@ -207,10 +209,12 @@ Bundle Bundle::mergeBundles(const Bundle& bundle1, const Bundle& bundle2)
 		for (int i = 0; i < result.getChildrenCount(); ++i)
 		{
 			const Bundle& resultBundle = result.childAt(i);
+//			qDebug() << "Bundle 1: " << resultBundle.toText();
 
 			if (bundle == resultBundle)
 			{
 				result.setChildAt(i, mergeBundles(resultBundle, bundle));
+				break;
 			}
 		}
 	}

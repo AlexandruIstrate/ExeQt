@@ -39,7 +39,6 @@ public:
 	void authenticate(const QString& userName, const QString& password);
 	void syncActions();
 
-public:
 	inline static AuthManager* instance() { return s_Instance; }
 
 	static void init();

@@ -68,6 +68,10 @@
           <property name="text">
            <string>Log In</string>
           </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/assets/images/button-icons/login.png</normaloff>:/assets/images/button-icons/login.png</iconset>
+          </property>
          </widget>
         </item>
        </layout>

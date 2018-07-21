@@ -70,4 +70,7 @@ void SettingsRegistry::checkDefaultsNeeded()
 
 	if (isSettingDefault(Settings::USERNAME))
 		set(Settings::USERNAME, Client::getHardwareID());
+
+	if (isSettingDefault(Settings::SHOW_MAIN_PAGE))
+		set(Settings::SHOW_MAIN_PAGE, true);
 }

@@ -12,12 +12,14 @@
 
 #include <QDebug>
 #include <QListWidgetItem>
+#include <QMessageBox>
 
 #include "commandaction.h"
 #include "menuaction.h"
 #include "appicon.h"
 #include "addgroupdialog.h"
 #include "networkmanager.h"
+#include "settingsregistry.h"
 
 #define NAME_PROPERTY           "name"
 #define ICON_PROPERTY           "icon"
@@ -63,38 +65,6 @@ bool ActionTab::checkBundle(const Bundle& bundle) const
 	return true;
 }
 
-//void ActionTab::readProperties(Bundle& bundle)
-//{
-////	if (!checkBundle(bundle))
-////		return;
-
-//	m_Name = bundle.get(NAME_PROPERTY);
-//	m_Icon = AddGroupDialog::getIconByName(bundle.get(ICON_PROPERTY));
-//	m_TrayIcon->setIcon(m_Icon.icon);
-
-//	for (int i = 0; i < bundle.getChildrenCount(); ++i)
-//	{
-//		ActionItem* action = new ActionItem(this);
-//		action->readProperties(bundle.childAt(i));
-
-//		addAction(action);
-//	}
-//}
-
-//void ActionTab::writeProperties(Bundle& bundle)
-//{
-//	bundle.add(NAME_PROPERTY, m_Name);
-//	bundle.add(ICON_PROPERTY, m_Icon.name);
-
-//	for (ActionItem* item : m_ActionItems)
-//	{
-//		Bundle child(item->getTagName());
-//		item->writeProperties(child);
-
-//		bundle.addChild(child);
-//	}
-//}
-
 void ActionTab::readProperties(Bundle& bundle)
 {
 //	if (!checkBundle(bundle))
@@ -130,6 +100,16 @@ void ActionTab::writeProperties(Bundle& bundle)
 void ActionTab::removeTrayIcon()
 {
 	m_TrayIcon->setVisible(false);
+}
+
+bool ActionTab::checkDelete()
+{
+	if (!SettingsRegistry::instance()->get(Settings::CONFIRM_DELETE).toBool())
+		return true;
+
+	QMessageBox dialog(QMessageBox::Icon::Question, tr("Remove Action"),
+					   tr("Are you sure you want to remove this action?"), QMessageBox::Yes | QMessageBox::No, this);
+	return dialog.exec() == QMessageBox::Yes;
 }
 
 void ActionTab::setupActions()
@@ -244,8 +224,10 @@ void ActionTab::onActionRemove()
 	if (line == -1)
 		return;
 
-	ActionItem* action = m_ActionItems[line];
-	removeAction(action);
+	if (!checkDelete())
+		return;
+
+	removeAction(m_ActionItems[line]);
 
 	NetworkManager::instance()->requestActionUpdate();
 }
@@ -256,9 +238,7 @@ void ActionTab::onActionEdit()
 	if (line == -1)
 		return;
 
-	ActionItem* action = m_ActionItems[line];
-	action->exec();
-
+	m_ActionItems[line]->exec();
 	updateActions();
 
 	NetworkManager::instance()->requestActionUpdate();

@@ -29,6 +29,7 @@ public:
 
 private:
 	void setupUI();
+	void setupDialogButtons();
 	void setupSignalsAndSlots();
 
 	void writeSettings();

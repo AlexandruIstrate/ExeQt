@@ -24,12 +24,20 @@
        <property name="text">
         <string>Add</string>
        </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/assets/images/button-icons/add.png</normaloff>:/assets/images/button-icons/add.png</iconset>
+       </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="btnRemove">
        <property name="text">
         <string>Remove</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/assets/images/button-icons/remove.png</normaloff>:/assets/images/button-icons/remove.png</iconset>
        </property>
       </widget>
      </item>
@@ -38,12 +46,18 @@
        <property name="text">
         <string>Edit</string>
        </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/assets/images/button-icons/edit.png</normaloff>:/assets/images/button-icons/edit.png</iconset>
+       </property>
       </widget>
      </item>
     </layout>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

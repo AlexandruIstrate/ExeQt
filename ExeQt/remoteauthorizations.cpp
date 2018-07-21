@@ -30,7 +30,15 @@ RemoteAuthorizations::~RemoteAuthorizations()
 
 void RemoteAuthorizations::setupUI()
 {
+	setupDialogButtons();
+
 	ui->tabGrpAuth->addTab(new AuthConnectTab(this), QIcon(":/assets/images/connect.png"), tr("Connect"));
 	ui->tabGrpAuth->addTab(new RemoteAuthTab(RemoteAuthTab::AccessType::ACCESSES_OTHER, this), QIcon(":/assets/images/other.png"), tr("Connected To"));
 	ui->tabGrpAuth->addTab(new RemoteAuthTab(RemoteAuthTab::AccessType::ACCESSES_THIS, this), QIcon(":/assets/images/current.png"), tr("Connected From"));
+}
+
+void RemoteAuthorizations::setupDialogButtons()
+{
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setIcon(QIcon(":/assets/images/button-icons/ok.png"));
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Cancel)->setIcon(QIcon(":/assets/images/button-icons/cancel.png"));
 }

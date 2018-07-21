@@ -32,5 +32,23 @@
         <file>assets/images/reference.png</file>
         <file>assets/images/desktop-icon.png</file>
         <file>assets/images/remote-control.png</file>
+        <file>assets/images/button-icons/arrow-up.png</file>
+        <file>assets/images/button-icons/arrow-down.png</file>
+        <file>assets/images/button-icons/add.png</file>
+        <file>assets/images/button-icons/remove.png</file>
+        <file>assets/images/button-icons/edit.png</file>
+        <file>assets/images/button-icons/broadcast.png</file>
+        <file>assets/images/button-icons/disconnect.png</file>
+        <file>assets/images/button-icons/info.png</file>
+        <file>assets/images/button-icons/run.png</file>
+        <file>assets/images/button-icons/cloud.png</file>
+        <file>assets/images/button-icons/configure.png</file>
+        <file>assets/images/button-icons/settings.png</file>
+        <file>assets/images/button-icons/start.png</file>
+        <file>assets/images/button-icons/connect.png</file>
+        <file>assets/images/button-icons/browse.png</file>
+        <file>assets/images/button-icons/cancel.png</file>
+        <file>assets/images/button-icons/ok.png</file>
+        <file>assets/images/button-icons/login.png</file>
     </qresource>
 </RCC>

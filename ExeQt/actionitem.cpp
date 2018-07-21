@@ -74,8 +74,16 @@ void ActionItem::setupSignalsAndSlots()
 
 void ActionItem::setupUI()
 {
+	setupDialogButtons();
+
 	setupActions();
 	setAction(Action::Type::COMMAND);
+}
+
+void ActionItem::setupDialogButtons()
+{
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setIcon(QIcon(":/assets/images/button-icons/ok.png"));
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Cancel)->setIcon(QIcon(":/assets/images/button-icons/cancel.png"));
 }
 
 void ActionItem::setupActions()

@@ -48,6 +48,10 @@
      <property name="text">
       <string>Configure Groups...</string>
      </property>
+     <property name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/assets/images/button-icons/configure.png</normaloff>:/assets/images/button-icons/configure.png</iconset>
+     </property>
     </widget>
    </item>
   </layout>

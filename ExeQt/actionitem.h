@@ -50,6 +50,7 @@ public:
 private:
 	void setupSignalsAndSlots();
 	void setupUI();
+	void setupDialogButtons();
 
 	void setupActions();
 	void addComboAction(Action::Type);
