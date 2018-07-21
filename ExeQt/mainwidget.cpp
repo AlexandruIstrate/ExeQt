@@ -51,8 +51,8 @@ MainWidget::MainWidget(QWidget* parent) :
 	TaskManager::init();
 	ActionServer::start();
 
-	setStyleSheet(StyleManager::instance()->getStyle());
 	ui->setupUi(this);
+	setStyleSheet(StyleManager::instance()->getStyle());
 
 	setupNetwork();
 	setupActions();
@@ -391,8 +391,6 @@ void MainWidget::onSyncSelected()
 	setupTabs();
 
 	loadFromFile();
-
-	//	m_RequestManager->uploadFile(Constants::UPLOAD_PATH, m_SaveFile);
 }
 
 void MainWidget::onRemoteControlSelected()

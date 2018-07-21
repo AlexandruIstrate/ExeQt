@@ -19,6 +19,8 @@ RemoteControl::RemoteControl(QWidget* parent) :
 	ui(new Ui::RemoteControl)
 {
 	ui->setupUi(this);
+
+	setupUI();
 	setupSignalsAndSlots();
 }
 
@@ -27,11 +29,20 @@ RemoteControl::~RemoteControl()
 	delete ui;
 }
 
+void RemoteControl::setupUI()
+{
+	setupDialogButtons();
+}
+
+void RemoteControl::setupDialogButtons()
+{
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setIcon(QIcon(":/assets/images/button-icons/ok.png"));
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Cancel)->setIcon(QIcon(":/assets/images/button-icons/cancel.png"));
+}
+
 void RemoteControl::setupSignalsAndSlots()
 {
 	connect(NetworkManager::instance(), &NetworkManager::fromThisConnectionsUpdated, this, &RemoteControl::onClientsUpdated);
-
-//	connect(ui->btnRefresh, &QPushButton::clicked, this, &RemoteControl::onRefresh);
 }
 
 void RemoteControl::addTab(Client& client)
@@ -60,8 +71,3 @@ void RemoteControl::onClientsUpdated()
 {
 	showTabs();
 }
-
-//void RemoteControl::onRefresh()
-//{
-//	showTabs();
-//}

@@ -55,7 +55,8 @@ private:
 	static void addIcon(const QIcon&);
 
 private:
-	void initUI();
+	void setupUI();
+	void setupDialogButtons();
 
 	void addIcon(const QIcon& icon, const QString& name);
 	void setupIcons();

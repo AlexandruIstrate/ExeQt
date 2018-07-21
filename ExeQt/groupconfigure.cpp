@@ -12,9 +12,11 @@
 
 #include <QDebug>
 #include <QListWidgetItem>
+#include <QMessageBox>
 
 #include "addgroupdialog.h"
 #include "networkmanager.h"
+#include "settingsregistry.h"
 
 GroupConfigure::GroupConfigure(MainWidget* parent) :
 	QDialog(parent), ui(new Ui::GroupConfigure),
@@ -55,7 +57,14 @@ void GroupConfigure::setupSignalsAndSlots()
 
 void GroupConfigure::setupUI()
 {
+	setupDialogButtons();
 	showActionGroups();
+}
+
+void GroupConfigure::setupDialogButtons()
+{
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setIcon(QIcon(":/assets/images/button-icons/ok.png"));
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Cancel)->setIcon(QIcon(":/assets/images/button-icons/cancel.png"));
 }
 
 int GroupConfigure::getSelectedItem()
@@ -71,6 +80,16 @@ void GroupConfigure::showActionGroups()
 		new QListWidgetItem(tab->getIcon().icon, tab->getName(), ui->lstGroups);
 }
 
+bool GroupConfigure::checkDelete()
+{
+	if (!SettingsRegistry::instance()->get(Settings::CONFIRM_DELETE).toBool())
+		return true;
+
+	QMessageBox dialog(QMessageBox::Icon::Question, tr("Remove Action Group"),
+					   tr("Are you sure you want to remove this action group?"), QMessageBox::Yes | QMessageBox::No, this);
+	return dialog.exec() == QMessageBox::Yes;
+}
+
 void GroupConfigure::onAdd()
 {
 	MainWidget* mw = (MainWidget*) parent();
@@ -84,6 +103,9 @@ void GroupConfigure::onRemove()
 {
 	int selectedItem = getSelectedItem();
 	if (selectedItem == -1)
+		return;
+
+	if (!checkDelete())
 		return;
 
 	MainWidget* mw = (MainWidget*) parent();

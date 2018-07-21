@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>410</width>
-    <height>413</height>
+    <height>444</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -63,7 +63,11 @@
    <item>
     <widget class="QPushButton" name="btnSync">
      <property name="text">
-      <string>Sync Tabs from Cloud</string>
+      <string>Sync from Cloud</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/assets/images/button-icons/cloud.png</normaloff>:/assets/images/button-icons/cloud.png</iconset>
      </property>
     </widget>
    </item>
@@ -72,12 +76,20 @@
      <property name="text">
       <string>Settings...</string>
      </property>
+     <property name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/assets/images/button-icons/settings.png</normaloff>:/assets/images/button-icons/settings.png</iconset>
+     </property>
     </widget>
    </item>
    <item>
     <widget class="QPushButton" name="btnContinue">
      <property name="text">
       <string>Start</string>
+     </property>
+     <property name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/assets/images/button-icons/start.png</normaloff>:/assets/images/button-icons/start.png</iconset>
      </property>
     </widget>
    </item>

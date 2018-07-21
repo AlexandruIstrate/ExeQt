@@ -38,6 +38,16 @@ void SettingsDialog::setupUI()
 	ui->edtSavePath->setText(Common::getSaveFilePath());
 	ui->edtAddress->setText(settings->get(Settings::CLOUD_SYNC_ADDRESS).toString());
 	ui->edtClientName->setText(settings->get(Settings::USERNAME).toString());
+	ui->chkShowMainPage->setChecked(settings->get(Settings::SHOW_MAIN_PAGE).toBool());
+	ui->chkConfirmDeletes->setChecked(settings->get(Settings::CONFIRM_DELETE).toBool());
+
+	setupDialogButtons();
+}
+
+void SettingsDialog::setupDialogButtons()
+{
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setIcon(QIcon(":/assets/images/button-icons/ok.png"));
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Cancel)->setIcon(QIcon(":/assets/images/button-icons/cancel.png"));
 }
 
 void SettingsDialog::setupSignalsAndSlots()
@@ -57,6 +67,8 @@ void SettingsDialog::updateInternalSettings()
 	settings->set(Settings::SAVE_PATH, ui->edtSavePath->text());
 	settings->set(Settings::CLOUD_SYNC_ADDRESS, ui->edtAddress->text());
 	settings->set(Settings::USERNAME, ui->edtClientName->text());
+	settings->set(Settings::SHOW_MAIN_PAGE, ui->chkShowMainPage->isChecked());
+	settings->set(Settings::CONFIRM_DELETE, ui->chkConfirmDeletes->isChecked());
 }
 
 void SettingsDialog::setUIPathState(bool ok)

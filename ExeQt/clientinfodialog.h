@@ -30,6 +30,10 @@ public:
 	void setName(const QString& name);
 	void setID(const QString& id);
 	void setAddress(const QString& address);
+
+private:
+	void setupUI();
+	void setupDialogButtons();
 };
 
 #endif // CLIENTINFODIALOG_H

@@ -30,12 +30,20 @@
           <property name="text">
            <string>Get Info</string>
           </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/assets/images/button-icons/info.png</normaloff>:/assets/images/button-icons/info.png</iconset>
+          </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="btnConnect">
           <property name="text">
            <string>Connect</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resources.qrc">
+            <normaloff>:/assets/images/button-icons/connect.png</normaloff>:/assets/images/button-icons/connect.png</iconset>
           </property>
          </widget>
         </item>
@@ -55,6 +63,10 @@
         <property name="text">
          <string>Broadcast</string>
         </property>
+        <property name="icon">
+         <iconset resource="resources.qrc">
+          <normaloff>:/assets/images/button-icons/broadcast.png</normaloff>:/assets/images/button-icons/broadcast.png</iconset>
+        </property>
        </widget>
       </item>
       <item>
@@ -72,6 +84,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

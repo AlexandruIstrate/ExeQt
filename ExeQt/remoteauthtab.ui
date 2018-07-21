@@ -22,10 +22,16 @@
      <property name="text">
       <string>PushButton</string>
      </property>
+     <property name="icon">
+      <iconset resource="resources.qrc">
+       <normaloff>:/assets/images/button-icons/disconnect.png</normaloff>:/assets/images/button-icons/disconnect.png</iconset>
+     </property>
     </widget>
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

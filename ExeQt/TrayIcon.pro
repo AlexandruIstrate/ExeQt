@@ -62,7 +62,8 @@ SOURCES += \
     networkmessage.cpp \
     actionreference.cpp \
     clientinfodialog.cpp \
-    settingsregistry.cpp
+    settingsregistry.cpp \
+    common.cpp
 
 HEADERS += \
         mainwidget.h \

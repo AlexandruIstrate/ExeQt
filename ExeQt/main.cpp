@@ -51,17 +51,21 @@ int main(int argc, char* argv[])
 		}
 
 		instance.setQuitOnLastWindowClosed(false);
+		instance.setStyle(StyleManager::instance()->getStyle());
 
-		MainPage mp;
-		mp.show();
+		QWidget* window = SettingsRegistry::instance()->get(Settings::SHOW_MAIN_PAGE).toBool() ?
+					(QWidget*) new MainPage() :
+					(QWidget*) new MainWidget();
+		window->show();
 
-		instance.setActivationWindow(&mp);
+		instance.setActivationWindow(window);
 		int result = instance.exec();
 
 		SettingsRegistry::terminate();
 		AuthManager::terminate();
 		StyleManager::terminate();
 
+		delete window;
 		return result;
 	}
 	catch (const std::exception& e)

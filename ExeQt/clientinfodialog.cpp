@@ -7,6 +7,8 @@
  *
 **************************************************************************/
 
+#include <QPushButton>
+
 #include "clientinfodialog.h"
 #include "ui_clientinfodialog.h"
 
@@ -15,6 +17,7 @@ ClientInfoDialog::ClientInfoDialog(const QString& name, const QString& id, const
 	ui(new Ui::ClientInfoDialog)
 {
 	ui->setupUi(this);
+	setupUI();
 
 	setName(name);
 	setID(id);
@@ -39,4 +42,15 @@ void ClientInfoDialog::setID(const QString& id)
 void ClientInfoDialog::setAddress(const QString& address)
 {
 	ui->lblAddress->setText(address);
+}
+
+void ClientInfoDialog::setupUI()
+{
+	setupDialogButtons();
+}
+
+void ClientInfoDialog::setupDialogButtons()
+{
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Ok)->setIcon(QIcon(":/assets/images/button-icons/ok.png"));
+	ui->buttonBox->button(QDialogButtonBox::StandardButton::Cancel)->setIcon(QIcon(":/assets/images/button-icons/cancel.png"));
 }

@@ -32,6 +32,8 @@ public:
 	~RemoteControl();
 
 private:
+	void setupUI();
+	void setupDialogButtons();
 	void setupSignalsAndSlots();
 
 	void addTab(Client&);

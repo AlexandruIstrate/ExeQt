@@ -31,6 +31,10 @@
        <property name="text">
         <string>Browse...</string>
        </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/assets/images/button-icons/browse.png</normaloff>:/assets/images/button-icons/browse.png</iconset>
+       </property>
       </widget>
      </item>
     </layout>
@@ -50,6 +54,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
