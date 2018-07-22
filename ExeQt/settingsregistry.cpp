@@ -66,10 +66,10 @@ void SettingsRegistry::checkDefaultsNeeded()
 		set(Settings::SAVE_PATH, !QApplication::applicationDirPath().isEmpty() ? QApplication::applicationDirPath() : QDir::homePath());
 
 	if (isSettingDefault(Settings::CLOUD_SYNC_ADDRESS))
-		set(Settings::USERNAME, Constants::DEFAULT_SERVER_ADDRESS);
+		set(Settings::CLOUD_SYNC_ADDRESS, Constants::DEFAULT_SERVER_ADDRESS);
 
 	if (isSettingDefault(Settings::USERNAME))
-		set(Settings::USERNAME, Client::getHardwareID());
+		set(Settings::USERNAME, Client::generateID());
 
 	if (isSettingDefault(Settings::SHOW_MAIN_PAGE))
 		set(Settings::SHOW_MAIN_PAGE, true);

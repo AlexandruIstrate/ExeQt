@@ -71,9 +71,7 @@ public:
 	static QString getCurrentIPAddress();
 
 	static QString getHardwareID();
-
-private:
-	QString generateID();
+	static QString generateID();
 
 signals:
 	void actionsUpdated(Bundle bundle);
