@@ -16,6 +16,7 @@
 #include <QPushButton>
 
 #include "mainwidget.h"
+#include "commandaction.h"
 
 #define ACTION_TYPE_PROPERTY "type"
 
@@ -53,7 +54,11 @@ void ActionItem::readProperties(Bundle& bundle)
 		return;
 
 	Action* action = Action::createFromTagName(bundle.getName(), this);
-	action->readProperties(bundle);
+
+	if (action)
+		action->readProperties(bundle);
+	else
+		action = new CommandAction("", "Unknown Action");
 
 	ui->cmbActionType->setCurrentIndex((int) action->getType());    // Here, we make sure we have the right type set
 	setAction(action);
