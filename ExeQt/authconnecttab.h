@@ -11,6 +11,7 @@
 #define AUTHCONNECTTAB_H
 
 #include <QWidget>
+#include <QTimer>
 
 #include "networkmanager.h"
 
@@ -24,6 +25,7 @@ class AuthConnectTab : public QWidget
 
 private:
 	Ui::AuthConnectTab* ui;
+	QTimer m_RefreshTimer;
 
 	QList<Client> m_Clients;
 
@@ -34,6 +36,7 @@ public:
 private:
 	void setupSignalsAndSlots();
 	void initUI();
+	void initTimer();
 
 	void setButtonText(const QString& text);
 	void setInfo(const QString& info);
@@ -56,6 +59,8 @@ private slots:
 
 	void onConnect();
 	void onGetInfo();
+
+	void onAutoRefresh();
 
 	void onDoubleClick(const QModelIndex&);
 };

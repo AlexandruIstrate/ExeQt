@@ -51,14 +51,20 @@ Client::Client(const QString& name, const QString& id, const QString& address, Q
 	m_Name { name }, m_ID { id }, m_Address { address }, m_ConnectSocket { socket }
 {
 	if (m_ConnectSocket)
-		connect(m_ConnectSocket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
+	{
+		connect(&m_BufferedSocket, &BufferedSocket::transferFinished, this, &Client::onActionsReceived);
+		m_BufferedSocket.setBufferSocket(m_ConnectSocket);
+	}
 }
 
 Client::Client(const Client& other)
 	: QObject {}, m_Name { other.m_Name }, m_ID { other.m_ID }, m_Address { other.m_Address }, m_ConnectSocket { other.m_ConnectSocket }
 {
 	if (m_ConnectSocket)
-		connect(m_ConnectSocket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
+	{
+		connect(&m_BufferedSocket, &BufferedSocket::transferFinished, this, &Client::onActionsReceived);
+		m_BufferedSocket.setBufferSocket(m_ConnectSocket);
+	}
 }
 
 Client::~Client()
@@ -69,7 +75,9 @@ Client::~Client()
 void Client::setSocket(QTcpSocket* socket)
 {
 	m_ConnectSocket = socket;
-	connect(m_ConnectSocket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
+
+	connect(&m_BufferedSocket, &BufferedSocket::transferFinished, this, &Client::onActionsReceived);
+	m_BufferedSocket.setBufferSocket(m_ConnectSocket);
 }
 
 QString Client::getLocalizedName() const
@@ -180,11 +188,9 @@ QString Client::generateID()
 	return QString(QCryptographicHash::hash(getHardwareID().toUtf8(), QCryptographicHash::Md5).toHex());
 }
 
-void Client::onReadyRead()
+void Client::onActionsReceived(const QByteArray& actionsData)
 {
-	QTcpSocket* socket = static_cast<QTcpSocket*>(QObject::sender());
-
-	NetworkMessage message(JSON_APP_IDENTIFIER, socket->readAll());
+	NetworkMessage message(JSON_APP_IDENTIFIER, actionsData);
 
 	if (message.hasError())
 		return;
@@ -192,9 +198,6 @@ void Client::onReadyRead()
 	if (message.hasProperty(JSON_KEY_ACTIONS))
 	{
 		QString bundle = message.getProperty(JSON_KEY_ACTIONS);
-
-		qDebug() << "Actions recieved:" << bundle;
-
 		if (bundle.isEmpty())
 			return;
 
@@ -221,42 +224,6 @@ void Client::onReadyRead()
 	}
 }
 
-// WritableSocket
-
-WritableSocket::WritableSocket(const QString& address, int port) : WritableSocket()
-{
-	connectToHost(address, port);
-}
-
-WritableSocket::WritableSocket()
-{
-	m_Socket = new QTcpSocket();
-	connect(m_Socket, &QTcpSocket::connected, this, &WritableSocket::onConnect);
-	connect(m_Socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(onError(QAbstractSocket::SocketError)));
-}
-
-void WritableSocket::connectToHost(const QString& address, int port)
-{
-	m_Socket->connectToHost(address, port);
-}
-
-void WritableSocket::write(const QByteArray& data)
-{
-	m_Data = data;
-}
-
-void WritableSocket::onConnect()
-{
-	qint64 size = m_Socket->write(m_Data);
-	if (size != m_Data.size())
-		QMessageBox::critical(nullptr, tr("Network Error"), tr("A network communication error has ocurred!"));
-}
-
-void WritableSocket::onError(QAbstractSocket::SocketError error)
-{
-	qDebug() << "Socket Error:" << error;
-}
-
 // NetworkManager
 
 NetworkManager* NetworkManager::s_Instance = nullptr;
@@ -270,6 +237,22 @@ NetworkManager::NetworkManager() : m_WritableSocket {  }, m_State { State::IDLE 
 }
 
 NetworkManager::~NetworkManager()
+{
+	delete m_ThisClient;
+}
+
+void NetworkManager::init()
+{
+	s_Instance = new NetworkManager();
+}
+
+void NetworkManager::terminate()
+{
+	s_Instance->closeAllConnections();
+	delete s_Instance;
+}
+
+void NetworkManager::closeAllConnections()
 {
 	while (m_ConnectedTo.size() > 0)
 	{
@@ -286,18 +269,6 @@ NetworkManager::~NetworkManager()
 		m_ConnectedFrom[index].disconnectFromHost();
 		m_ConnectedFrom.removeAt(index);
 	}
-
-	delete m_ThisClient;
-}
-
-void NetworkManager::init()
-{
-	s_Instance = new NetworkManager();
-}
-
-void NetworkManager::terminate()
-{
-	delete s_Instance;
 }
 
 void NetworkManager::requestActionUpdate()
@@ -540,19 +511,20 @@ void ActionServer::setupSignalsAndSlots()
 
 void ActionServer::parseRequest(QTcpSocket* socket)
 {
-	QString response = socket->readAll();
-	qDebug() << response;
+	QString messageStr = socket->readAll();
+	qDebug() << messageStr;
 
-	QJsonDocument doc = QJsonDocument::fromJson(response.toUtf8());
-	QJsonObject object = doc.object();
+	NetworkMessage message(JSON_APP_IDENTIFIER, messageStr);
 
-	// Check that this request is a valid ExeQt request
-	if (object.value(JSON_KEY_IDENTIFIER).toString() != JSON_APP_IDENTIFIER)
+	if (message.hasError())
+	{
+		qDebug() << "Auth message has an error";
 		return;
+	}
 
-	Client client(object.value(JSON_KEY_NAME).toString(),
-				  object.value(JSON_KEY_ID).toString(),
-				  stripAddress(socket->localAddress().toString()),
+	Client client(message.getProperty(JSON_KEY_NAME),
+				  message.getProperty(JSON_KEY_ID),
+				  stripAddress(socket->peerAddress().toString()),
 				  socket);
 
 	QMessageBox::StandardButton reply =

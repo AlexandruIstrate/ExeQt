@@ -20,6 +20,7 @@
 #include <QTcpServer>
 
 #include "saveable.h"
+#include "socket.h"
 
 class ActionReference;
 class SettingsRegistry;
@@ -34,6 +35,7 @@ private:
 	QString m_Address;	// TODO: Remove this field and use the socket for getting the IP address
 
 	QTcpSocket* m_ConnectSocket;
+	BufferedSocket m_BufferedSocket;
 
 public:
 	Client();
@@ -77,29 +79,8 @@ signals:
 	void actionsUpdated(Bundle bundle);
 
 private slots:
-	void onReadyRead();
-};
-
-class WritableSocket : public QObject
-{
-	Q_OBJECT
-
-private:
-	QTcpSocket* m_Socket;
-	QByteArray m_Data;
-
-public:
-	WritableSocket(const QString& address, int port);
-	WritableSocket();
-
-	inline QTcpSocket* getSocket() { return m_Socket; }
-
-	void connectToHost(const QString& address, int port);
-	void write(const QByteArray& data);
-
-private slots:
-	void onConnect();
-	void onError(QAbstractSocket::SocketError);
+//	void onReadyRead();
+	void onActionsReceived(const QByteArray& actionsData);
 };
 
 class NetworkManager : public QObject
@@ -150,6 +131,8 @@ public:
 
 	static void init();
 	static void terminate();
+
+	void closeAllConnections();
 
 	void requestActionUpdate();
 	void updateActions(const Bundle&);

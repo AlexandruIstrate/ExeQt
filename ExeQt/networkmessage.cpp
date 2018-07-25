@@ -14,7 +14,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#define JSON_KEY_IDENTIFIER	"appIdentifier"
+#define JSON_KEY_IDENTIFIER "appIdentifier"
 
 NetworkMessage::NetworkMessage(const QString& appIdentifier) : m_AppIdentifier { appIdentifier }, m_HasError { false }
 {
@@ -54,12 +54,16 @@ QString NetworkMessage::buildMessage() const
 	for (QMap<QString, QString>::const_iterator iter = m_Properties.constBegin(); iter != m_Properties.constEnd(); ++iter)
 		obj.insert(iter.key(), iter.value());
 
-	return QJsonDocument(obj).toJson(QJsonDocument::Compact);
+	return QJsonDocument(obj).toJson(QJsonDocument::Compact).append(MESSAGE_END_CHARACTER);
 }
 
 void NetworkMessage::parseJson(const QString& json)
 {
-	QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+	QString stripped = json;
+	if (stripped.endsWith(MESSAGE_END_CHARACTER))
+		stripped.remove(json.length() - 1, 1);
+
+	QJsonDocument doc = QJsonDocument::fromJson(stripped.toUtf8());
 	QJsonObject object = doc.object();
 
 	// Check that this request is a valid app request
