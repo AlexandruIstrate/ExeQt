@@ -13,6 +13,8 @@
 #include <QString>
 #include <QMap>
 
+#define MESSAGE_END_CHARACTER '\a'
+
 class NetworkMessage
 {
 private:

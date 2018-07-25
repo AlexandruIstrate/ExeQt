@@ -14,11 +14,13 @@
 
 #include "clientinfodialog.h"
 
-#define MSG_BROADCASTING	tr("Check your other devices. This device should show up in the \"Connect\" tab.")
-#define MSG_IDLE			tr("Press the button to become discoverable.")
+#define MSG_BROADCASTING			tr("Check your other devices. This device should show up in the \"Connect\" tab.")
+#define MSG_IDLE					tr("Press the button to become discoverable.")
 
-#define BTN_BROADCASTING	tr("Stop Broadcasting")
-#define BTN_IDLE			tr("Broadcast")
+#define BTN_BROADCASTING			tr("Stop Broadcasting")
+#define BTN_IDLE					tr("Broadcast")
+
+#define AUTO_REFRESH_INTERVAL		3000
 
 AuthConnectTab::AuthConnectTab(QWidget* parent) :
 	QWidget(parent),
@@ -28,6 +30,8 @@ AuthConnectTab::AuthConnectTab(QWidget* parent) :
 
 	initUI();
 	setupSignalsAndSlots();
+
+	initTimer();
 }
 
 AuthConnectTab::~AuthConnectTab()
@@ -44,11 +48,19 @@ void AuthConnectTab::setupSignalsAndSlots()
 	connect(ui->btnInfo, &QPushButton::clicked, this, &AuthConnectTab::onGetInfo);
 
 	connect(ui->lstDevices, &QListWidget::doubleClicked, this, &AuthConnectTab::onDoubleClick);
+
+	connect(&m_RefreshTimer, &QTimer::timeout, this, &AuthConnectTab::onAutoRefresh);
 }
 
 void AuthConnectTab::initUI()
 {
 	setUIState(NetworkManager::instance()->getState());
+}
+
+void AuthConnectTab::initTimer()
+{
+	m_RefreshTimer.setInterval(AUTO_REFRESH_INTERVAL);
+	m_RefreshTimer.setSingleShot(false);
 }
 
 void AuthConnectTab::setButtonText(const QString& text)
@@ -138,6 +150,8 @@ void AuthConnectTab::onBroadcast()
 
 void AuthConnectTab::onClientAvailable(Client client)
 {
+	m_RefreshTimer.start();	// Start or restart the timer
+
 	// If the client is not the current device
 	if (NetworkManager::instance()->getThisClient()->getLocalizedName() == client.getLocalizedName())
 		return;
@@ -174,6 +188,11 @@ void AuthConnectTab::onGetInfo()
 
 	ClientInfoDialog infoDialog(client.getName(), client.getID(), client.getAddress(), this);
 	infoDialog.exec();
+}
+
+void AuthConnectTab::onAutoRefresh()
+{
+	clearClients();
 }
 
 void AuthConnectTab::onDoubleClick(const QModelIndex&)

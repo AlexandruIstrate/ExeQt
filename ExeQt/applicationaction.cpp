@@ -13,6 +13,7 @@
 #include <QDebug>
 #include <QProcess>
 #include <QFileDialog>
+#include <QDir>
 #include <QMessageBox>
 
 #define APP_PATH_PROPERTY "appPath"
@@ -91,10 +92,10 @@ void ApplicationAction::initBundle()
 
 void ApplicationAction::execute()
 {
+	// TODO: Member QProcess and error handling using the return value of startDetached
 	QProcess* process = new QProcess(this);
-//	connect(process, &QProcess::finished, this, &ApplicationAction::onProcessFinished);
 	connect(process, SIGNAL(errorOccurred(QProcess::ProcessError)), this, SLOT(onProcessError(QProcess::ProcessError)));
-	process->startDetached(m_AppPath);
+	process->startDetached(QString("\"%1\"").arg(m_AppPath));
 }
 
 bool ApplicationAction::validate()
@@ -129,7 +130,7 @@ void ApplicationAction::onBrowse()
 	if (dialog.exec() == QDialog::DialogCode::Rejected)
 		return;
 
-	ui->edtPath->setText(dialog.selectedFiles()[0]);
+	ui->edtPath->setText(QDir::toNativeSeparators(dialog.selectedFiles().at(0)));
 }
 
 void ApplicationAction::onProcessError(QProcess::ProcessError)

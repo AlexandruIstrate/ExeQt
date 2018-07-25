@@ -44,7 +44,7 @@ Running actions on another computer on the LAN
 
 ## Compiling from Source
 
-You must first have the GNU compiler (gcc) and the Qt Toolkit installed on your machine
+You must first have one of the C++ compilers (Qt pretty much supports all compilers including MSVC, GCC and MinGW) and the Qt Toolkit installed on your machine
 
 - **Windows:** The project must be first built using the QtCreator IDE and then if you want to create a standalone executable you must use the tool [windeployqt](https://doc.qt.io/qt-5/windows-deployment.html) which creates a directory with your app and all of the required DLLs so that you can run ExeQt on a system without having Qt installed
 

@@ -63,7 +63,8 @@ SOURCES += \
     actionreference.cpp \
     clientinfodialog.cpp \
     settingsregistry.cpp \
-    common.cpp
+    common.cpp \
+    socket.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -101,7 +102,8 @@ HEADERS += \
     networkmessage.h \
     actionreference.h \
     clientinfodialog.h \
-    settingsregistry.h
+    settingsregistry.h \
+    socket.h
 
 FORMS += \
         mainwidget.ui \
