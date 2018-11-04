@@ -20,8 +20,11 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QPushButton" name="btnUp">
+         <property name="toolTip">
+          <string>Move the selected action up</string>
+         </property>
          <property name="text">
-          <string>Up</string>
+          <string>&amp;Up</string>
          </property>
          <property name="icon">
           <iconset resource="resources.qrc">
@@ -31,8 +34,11 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnDown">
+         <property name="toolTip">
+          <string>Move the selected action down</string>
+         </property>
          <property name="text">
-          <string>Down</string>
+          <string>&amp;Down</string>
          </property>
          <property name="icon">
           <iconset resource="resources.qrc">
@@ -55,8 +61,11 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnAdd">
+         <property name="toolTip">
+          <string>Add an existing action to be run</string>
+         </property>
          <property name="text">
-          <string>Add</string>
+          <string>&amp;Add</string>
          </property>
          <property name="icon">
           <iconset resource="resources.qrc">
@@ -66,8 +75,11 @@
        </item>
        <item>
         <widget class="QPushButton" name="btnRemove">
+         <property name="toolTip">
+          <string>Remove the selected action from the ones that will be run</string>
+         </property>
          <property name="text">
-          <string>Remove</string>
+          <string>&amp;Remove</string>
          </property>
          <property name="icon">
           <iconset resource="resources.qrc">

@@ -23,7 +23,7 @@
 #define ACTION_NAME_PROPERTY	"actionName"
 
 SetAction::SetAction(const QString& name, QWidget* parent) :
-	Action(name, Action::Type::SET, parent), ui(new Ui::SetAction)
+	Action(name, Action::Type::SET, ImageResource(), parent), ui(new Ui::SetAction)
 {
 	ui->setupUi(this);
 

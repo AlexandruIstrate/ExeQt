@@ -33,12 +33,25 @@ static void onInstanceRunning()
 	msgBox.exec();
 }
 
+void setupIcons()
+{
+	IconManager* im = IconManager::instance();
+	im->registerIcon("Not Found", ":/assets/images/action-custom-icons/notfound.png");
+	im->registerIcon("File", ":/assets/images/action-custom-icons/file.png");
+	im->registerIcon("Web", ":/assets/images/action-custom-icons/web.png");
+	im->registerIcon("Shell", ":/assets/images/action-custom-icons/shell.png");
+	im->registerIcon("Monitor", ":/assets/images/action-custom-icons/monitor.png");
+	im->registerIcon("Keyboard", ":/assets/images/action-custom-icons/keyboard.png");
+	im->registerIcon("Mouse", ":/assets/images/action-custom-icons/mouse.png");
+}
+
 int main(int argc, char* argv[])
 {
 	try
 	{
 		SettingsRegistry::init();
 		AuthManager::init();
+		IconManager::init();
 
 		StyleManager::init();
 		StyleManager::instance()->setStyleFile(STYLE_FILE);
@@ -53,14 +66,17 @@ int main(int argc, char* argv[])
 		instance.setQuitOnLastWindowClosed(false);
 		instance.setStyle(StyleManager::instance()->getStyle());
 
+		setupIcons();
+
 		QWidget* window = SettingsRegistry::instance()->get(Settings::SHOW_MAIN_PAGE).toBool() ?
-					(QWidget*) new MainPage() :
-					(QWidget*) new MainWidget();
+					static_cast<QWidget*>(new MainPage()) :
+					static_cast<QWidget*>(new MainWidget());
 		window->show();
 
 		instance.setActivationWindow(window);
 		int result = instance.exec();
 
+		IconManager::terminate();
 		SettingsRegistry::terminate();
 		AuthManager::terminate();
 		StyleManager::terminate();

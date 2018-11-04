@@ -181,7 +181,7 @@ void ActionTab::updateActions()
 	for (ActionItem* actionItem : m_ActionItems)
 	{
 		Action* action = actionItem->getAction();
-		ui->actionList->addItem(new QListWidgetItem(Action::getActionIcon(action->getType()), action->getName()));
+		ui->actionList->addItem(new QListWidgetItem(action->getIcon().image, action->getName()));
 
 		MenuAction* menuAct = new MenuAction(action, this);
 		m_TrayMenu->addAction(menuAct);

@@ -50,5 +50,12 @@
         <file>assets/images/button-icons/cancel.png</file>
         <file>assets/images/button-icons/ok.png</file>
         <file>assets/images/button-icons/login.png</file>
+        <file>assets/images/action-custom-icons/file.png</file>
+        <file>assets/images/action-custom-icons/notfound.png</file>
+        <file>assets/images/action-custom-icons/web.png</file>
+        <file>assets/images/action-custom-icons/keyboard.png</file>
+        <file>assets/images/action-custom-icons/monitor.png</file>
+        <file>assets/images/action-custom-icons/mouse.png</file>
+        <file>assets/images/action-custom-icons/shell.png</file>
     </qresource>
 </RCC>

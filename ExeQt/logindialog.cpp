@@ -17,10 +17,11 @@
 #include <QJsonObject>
 
 #include "constants.h"
+#include "common.h"
 #include "saveable.h"
 #include "mainwidget.h"
 #include "authmanager.h"
-#include "common.h"
+#include "mergedialog.h"
 
 LoginDialog::LoginDialog(QWidget* parent) :
 	QDialog(parent), ui(new Ui::LoginDialog)

@@ -19,7 +19,7 @@
 #define APP_PATH_PROPERTY "appPath"
 
 ApplicationAction::ApplicationAction(const QString& appPath, const QString& name, QWidget* parent) :
-	Action(name, Action::Type::APPLICATION, parent),
+	Action(name, Action::Type::APPLICATION, ImageResource(), parent),
 	ui(new Ui::ApplicationAction),
 	m_AppPath { appPath }
 {
@@ -28,7 +28,7 @@ ApplicationAction::ApplicationAction(const QString& appPath, const QString& name
 }
 
 ApplicationAction::ApplicationAction(const QString& name, QWidget* parent) :
-	Action(name, Action::Type::APPLICATION, parent),
+	Action(name, Action::Type::APPLICATION, ImageResource(), parent),
 	ui(new Ui::ApplicationAction),
 	m_AppPath { "" }
 {

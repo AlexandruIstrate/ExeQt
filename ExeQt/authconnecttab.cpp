@@ -17,8 +17,8 @@
 #define MSG_BROADCASTING			tr("Check your other devices. This device should show up in the \"Connect\" tab.")
 #define MSG_IDLE					tr("Press the button to become discoverable.")
 
-#define BTN_BROADCASTING			tr("Stop Broadcasting")
-#define BTN_IDLE					tr("Broadcast")
+#define BTN_BROADCASTING			tr("Stop &Broadcasting")
+#define BTN_IDLE					tr("&Broadcast")
 
 #define AUTO_REFRESH_INTERVAL		3000
 

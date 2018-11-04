@@ -17,14 +17,14 @@
 #define LINK_PROPERTY "link"
 
 LinkAction::LinkAction(const QString& link, const QString& name, QWidget* parent) :
-	Action(name, Action::Type::LINK, parent), ui(new Ui::LinkAction), m_Link { link }
+	Action(name, Action::Type::LINK, ImageResource(), parent), ui(new Ui::LinkAction), m_Link { link }
 {
 	ui->setupUi(this);
 	setupSignalsAndSlots();
 }
 
 LinkAction::LinkAction(const QString& name, QWidget* parent) :
-	Action(name, Action::Type::LINK, parent), ui(new Ui::LinkAction), m_Link { "" }
+	Action(name, Action::Type::LINK, ImageResource(), parent), ui(new Ui::LinkAction), m_Link { "" }
 {
 	ui->setupUi(this);
 	setupSignalsAndSlots();

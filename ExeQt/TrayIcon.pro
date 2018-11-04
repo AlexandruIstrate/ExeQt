@@ -64,7 +64,10 @@ SOURCES += \
     clientinfodialog.cpp \
     settingsregistry.cpp \
     common.cpp \
-    socket.cpp
+    socket.cpp \
+    mergedialog.cpp \
+    actiondisplaytree.cpp \
+    iconmanager.cpp
 
 HEADERS += \
         mainwidget.h \
@@ -103,7 +106,10 @@ HEADERS += \
     actionreference.h \
     clientinfodialog.h \
     settingsregistry.h \
-    socket.h
+    socket.h \
+    mergedialog.h \
+    actiondisplaytree.h \
+    iconmanager.h
 
 FORMS += \
         mainwidget.ui \
@@ -124,7 +130,8 @@ FORMS += \
     remotecontroltab.ui \
     remoteauthtab.ui \
     authconnecttab.ui \
-    clientinfodialog.ui
+    clientinfodialog.ui \
+    mergedialog.ui
 
 RESOURCES += \
     resources.qrc

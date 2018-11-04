@@ -17,39 +17,40 @@
 
 #include "networkmanager.h"
 #include "actionreference.h"
+#include "actiondisplaytree.h"
 
-class TreeItem : public QTreeWidgetItem
-{
-public:
-	enum class Type
-	{
-		UNKNOWN, TAB, ACTION, ACTION_REFERENCE
-	};
+//class TreeItem : public QTreeWidgetItem
+//{
+//public:
+//	enum class Type
+//	{
+//		UNKNOWN, TAB, ACTION, ACTION_REFERENCE
+//	};
 
-protected:
-	Type m_Type;
-	QString m_Name;
+//protected:
+//	Type m_Type;
+//	QString m_Name;
 
-	ActionReference* m_ActionReference;
+//	ActionReference* m_ActionReference;
 
-public:
-	TreeItem(Type type);
-	TreeItem(Type type, const QString& name);
-	TreeItem(ActionReference* reference, const QString& name = QString());
+//public:
+//	TreeItem(Type type);
+//	TreeItem(Type type, const QString& name);
+//	TreeItem(ActionReference* reference, const QString& name = QString());
 
-	~TreeItem();
+//	~TreeItem();
 
-	inline Type getType() const { return m_Type; }
+//	inline Type getType() const { return m_Type; }
 
-	inline const QString& getName() const { return m_Name; }
-	inline void setName(const QString& name) { m_Name = name; }
+//	inline const QString& getName() const { return m_Name; }
+//	inline void setName(const QString& name) { m_Name = name; }
 
-	inline ActionReference* getActionReference() { return m_ActionReference; }
-	inline void setActionReference(ActionReference* reference) { m_ActionReference = reference; }
+//	inline ActionReference* getActionReference() { return m_ActionReference; }
+//	inline void setActionReference(ActionReference* reference) { m_ActionReference = reference; }
 
-private:
-	void setItemName(Type);
-};
+//private:
+//	void setItemName(Type);
+//};
 
 namespace Ui {
 class RemoteControlTab;
@@ -61,6 +62,7 @@ class RemoteControlTab : public QWidget
 
 private:
 	Ui::RemoteControlTab* ui;
+	ActionDisplayTree m_ActionTree;
 
 	Client& m_Client;
 	int m_TabIndex;
@@ -70,13 +72,14 @@ public:
 	~RemoteControlTab();
 
 private:
+	void setupUI();
 	void setupSignalsAndSlots();
 	void setupTree();
 
 	void addToTree(const Bundle& bundle);
 	void clearTree();
 
-	void createTreeItem(TreeItem* parent, const Bundle& actionBundle);
+//	void createTreeItem(TreeItem* parent, const Bundle& actionBundle);
 
 private slots:
 	void onRun();

@@ -18,7 +18,7 @@
 #define COMMAND_PROPERTY "command"
 
 CommandAction::CommandAction(const QString& command, const QString& name, QWidget* parent) :
-	Action(name, Action::Type::COMMAND, parent),
+	Action(name, Action::Type::COMMAND, ImageResource(), parent),
 	ui(new Ui::CommandAction),
 	m_Command { command }
 {
@@ -27,7 +27,7 @@ CommandAction::CommandAction(const QString& command, const QString& name, QWidge
 }
 
 CommandAction::CommandAction(const QString& name, QWidget* parent) :
-	Action(name, Action::Type::COMMAND, parent),
+	Action(name, Action::Type::COMMAND, ImageResource(), parent),
 	ui(new Ui::CommandAction),
 	m_Command { "" }
 {

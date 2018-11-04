@@ -26,7 +26,7 @@
      <item>
       <widget class="QPushButton" name="btnAdd">
        <property name="text">
-        <string>Add</string>
+        <string>&amp;Add</string>
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">

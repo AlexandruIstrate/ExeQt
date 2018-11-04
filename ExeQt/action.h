@@ -16,6 +16,7 @@
 #include <QIcon>
 
 #include "saveable.h"
+#include "iconmanager.h"
 
 class Action : public QWidget, public Saveable
 {
@@ -28,17 +29,21 @@ public:
 protected:
 	Type m_Type;
 	QString m_Name;
+	ImageResource m_Icon;
 
 public:
-	Action(const QString& name, Type type, QWidget* parent = nullptr);
+	Action(const QString& name, Type type, ImageResource icon, QWidget* parent = nullptr);
 	virtual ~Action();
 
 	inline void setName(const QString& name) { m_Name = name; }
 	inline const QString& getName() const { return m_Name; }
 
+	inline void setIcon(ImageResource icon) { m_Icon = icon; }
+	inline const ImageResource& getIcon() const { return m_Icon; }
+
 	inline Type getType() const { return m_Type; }
 
-	QIcon getIcon() const;
+	QIcon getActionTypeIcon() const;
 
 	virtual QString getTagName() const override;
 

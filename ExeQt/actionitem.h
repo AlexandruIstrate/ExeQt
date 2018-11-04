@@ -29,8 +29,8 @@ class ActionItem : public QDialog, public Saveable
 
 private:
 	Ui::ActionItem* ui;
-	Action* m_Action;
 
+	Action* m_Action;
 	bool m_Valid;
 
 public:
@@ -50,6 +50,7 @@ public:
 private:
 	void setupSignalsAndSlots();
 	void setupUI();
+	void setupIcons();
 	void setupDialogButtons();
 
 	void setupActions();
@@ -74,8 +75,9 @@ public slots:
 	void accept() override;
 
 private slots:
-	void onActionTypeChanged(int);
 	void onNameChanged(const QString&);
+	void onActionTypeChanged(int);
+	void onIconChanged(const QString& name);
 };
 
 #endif // ACTIONITEM_H

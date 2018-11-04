@@ -20,9 +20,10 @@
 
 #define NAME_PROPERTY "name"
 #define TYPE_PROPERTY "type"
+#define ICON_PROPERTY "icon"
 
-Action::Action(const QString& name, Type type, QWidget* parent)
-	: QWidget { parent }, m_Type { type }, m_Name { name }
+Action::Action(const QString& name, Type type, ImageResource icon, QWidget* parent)
+	: QWidget { parent }, m_Type { type }, m_Name { name }, m_Icon { icon }
 {
 
 }
@@ -32,7 +33,7 @@ Action::~Action()
 
 }
 
-QIcon Action::getIcon() const
+QIcon Action::getActionTypeIcon() const
 {
 	return getActionIcon(m_Type);
 }
@@ -60,11 +61,13 @@ void Action::readProperties(Bundle& bundle)
 
 	m_Name = bundle.get(NAME_PROPERTY);
 	m_Type = getActionTypeFromTag(bundle.getName());
+	m_Icon = IconManager::instance()->getIcon(bundle.get(ICON_PROPERTY));
 }
 
 void Action::writeProperties(Bundle& bundle)
 {
 	bundle.add(NAME_PROPERTY, m_Name);
+	bundle.add(ICON_PROPERTY, m_Icon.name);
 }
 
 Action* Action::create(Type type, QWidget* parent)

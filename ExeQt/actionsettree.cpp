@@ -102,7 +102,7 @@ void ActionRow::loadActions()
 			Action* action = actionItem->getAction();
 
 			if (action != getParent()->getParentAction())
-				m_CmbAction->addItem(action->getIcon(), actionItem->getName());
+				m_CmbAction->addItem(action->getActionTypeIcon(), actionItem->getName());
 		}
 	}
 

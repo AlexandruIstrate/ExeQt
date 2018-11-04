@@ -20,13 +20,15 @@
 #include "common.h"
 #include "bundle.h"
 #include "mainwidget.h"
+#include "mergedialog.h"
+#include "stylemanager.h"
 
 #define PROPERTY_USER			"user"
 #define PROPERTY_PASSWORD		"pwd"
 
 AuthManager* AuthManager::s_Instance = nullptr;
 
-AuthManager::AuthManager() : m_IsAuth { false }
+AuthManager::AuthManager() : m_IsAuth { false }, m_SaveOnExit { true }
 {
 	setupNetwork();
 }
@@ -103,7 +105,7 @@ Bundle getActionBundle(const QString& saveFile)
 	return Bundle::fromFile(saveFile);
 }
 
-QString AuthManager::parseSyncActions(const QString& jsonText)
+bool AuthManager::parseSyncActions(const QString& jsonText, QString* outMessage)
 {
 	QJsonDocument doc(QJsonDocument::fromJson(jsonText.toUtf8()));
 
@@ -116,17 +118,44 @@ QString AuthManager::parseSyncActions(const QString& jsonText)
 		const QString SAVE_FILE = Common::getSaveFilePath();
 
 		Bundle webBundle = Bundle::fromXML(message);
-		Bundle localBundle = getActionBundle(SAVE_FILE);
+		Bundle localBundle = getActionBundle(SAVE_FILE);	// Get the actions from the app if it's running or from the save file otherwise
+		localBundle.saveToFile("/data/local.txt");
 
-		Bundle merged = Bundle::mergeBundles(webBundle, localBundle);
+		MergeDialog md(localBundle, webBundle, MainWidget::instance());
+		md.setStyleSheet(StyleManager::instance()->getStyle());
+
+		if (md.exec() == QDialog::DialogCode::Rejected)
+		{
+			if (outMessage)
+				*outMessage = message;
+
+			return false;
+		}
+
+		const Bundle& merged = md.getMergeResult();
 		merged.saveToFile(SAVE_FILE);
+
+		reloadActions();
 	}
 	else
 	{
 		QMessageBox::critical(nullptr, tr("Download failed"), message);
 	}
 
-	return message;
+	if (outMessage)
+		*outMessage = message;
+
+	return true;
+}
+
+void AuthManager::reloadActions()
+{
+	MainWidget* mw = MainWidget::instance();
+
+	mw->removeTabs();
+	mw->setupTabs();
+
+	mw->loadFromFile();
 }
 
 void AuthManager::onLoginFinished(QNetworkReply* reply, bool timedOut)
@@ -151,6 +180,8 @@ void AuthManager::onLoginFinished(QNetworkReply* reply, bool timedOut)
 
 void AuthManager::onFileSyncFinished(QNetworkReply* reply, bool timedOut)
 {
+	disconnect(m_RequestManager, &RequestManager::requestFinished, this, &AuthManager::onFileSyncFinished);
+
 	if (timedOut)
 	{
 		QMessageBox::critical(nullptr, tr("Timed Out"), tr("Request timed out."));
@@ -163,8 +194,8 @@ void AuthManager::onFileSyncFinished(QNetworkReply* reply, bool timedOut)
 		return;
 	}
 
-	disconnect(m_RequestManager, &RequestManager::requestFinished, this, &AuthManager::onFileSyncFinished);
+	bool ok = parseSyncActions(reply->readAll());
+	AuthManager::instance()->setShouldSaveOnExit(ok);
 
-	parseSyncActions(reply->readAll());
 	emit doneSync();
 }

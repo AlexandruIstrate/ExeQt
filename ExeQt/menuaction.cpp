@@ -10,7 +10,7 @@
 #include "menuaction.h"
 
 MenuAction::MenuAction(Action* action, QObject* parent) :
-	QAction(Action::getActionIcon(action->getType()), action->getName(), parent), m_Action { action }
+	QAction(action->getIcon().image, action->getName(), parent), m_Action { action }
 {
 	connect(this, SIGNAL(triggered()), this, SLOT(onTrigger()));
 }

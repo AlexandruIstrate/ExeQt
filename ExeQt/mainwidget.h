@@ -37,6 +37,7 @@ class MainWidget : public QWidget, public Saveable
 
 private:
 	friend class GroupConfigure;
+	friend class AuthManager;
 
 private:
 	static MainWidget* s_Instance;

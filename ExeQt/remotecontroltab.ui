@@ -15,18 +15,12 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTreeWidget" name="treeActions">
-     <column>
-      <property name="text">
-       <string notr="true">1</string>
-      </property>
-     </column>
-    </widget>
-   </item>
-   <item>
     <widget class="QPushButton" name="btnRun">
+     <property name="toolTip">
+      <string>Run the selected remote action</string>
+     </property>
      <property name="text">
-      <string>Run</string>
+      <string>&amp;Run</string>
      </property>
      <property name="icon">
       <iconset resource="resources.qrc">

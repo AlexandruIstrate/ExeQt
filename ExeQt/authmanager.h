@@ -26,7 +26,9 @@ private:
 	RequestManager* m_RequestManager;
 
 	QString m_Token;
+
 	bool m_IsAuth;
+	bool m_SaveOnExit;
 
 private:
 	AuthManager();
@@ -35,6 +37,9 @@ private:
 public:
 	inline const QString& getToken() const { return m_Token; }
 	inline bool isAuth() const { return m_IsAuth; }
+
+	inline bool shouldSaveOnExit() const { return m_SaveOnExit; }
+	inline void setShouldSaveOnExit(bool sync) { m_SaveOnExit = sync; }
 
 	void authenticate(const QString& userName, const QString& password);
 	void syncActions();
@@ -48,7 +53,9 @@ private:
 	void setupNetwork();
 
 	void parseLoginResponse(const QString&);
-	QString parseSyncActions(const QString&);
+	bool parseSyncActions(const QString&, QString* outMessage = nullptr);
+
+	void reloadActions();
 
 signals:
 	void doneLogin();

@@ -45,8 +45,11 @@
    </item>
    <item>
     <widget class="QPushButton" name="btnGroupConfigure">
+     <property name="toolTip">
+      <string>Configure the action groups on the system tray</string>
+     </property>
      <property name="text">
-      <string>Configure Groups...</string>
+      <string>&amp;Configure Groups...</string>
      </property>
      <property name="icon">
       <iconset resource="resources.qrc">

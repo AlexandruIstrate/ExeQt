@@ -21,8 +21,11 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="btnAdd">
+       <property name="toolTip">
+        <string>Add a new action to this group</string>
+       </property>
        <property name="text">
-        <string>Add</string>
+        <string>&amp;Add</string>
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">
@@ -32,8 +35,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnRemove">
+       <property name="toolTip">
+        <string>Remove the selected action from this group</string>
+       </property>
        <property name="text">
-        <string>Remove</string>
+        <string>&amp;Remove</string>
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">
@@ -43,8 +49,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="btnEdit">
+       <property name="toolTip">
+        <string>Edit the selected action</string>
+       </property>
        <property name="text">
-        <string>Edit</string>
+        <string>&amp;Edit</string>
        </property>
        <property name="icon">
         <iconset resource="resources.qrc">

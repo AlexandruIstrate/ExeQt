@@ -11,16 +11,14 @@
 #include "ui_actionitem.h"
 
 #include <QDebug>
-
 #include <QMessageBox>
 #include <QPushButton>
+#include <QComboBox>
 
 #include "mainwidget.h"
 #include "commandaction.h"
 
 #define ACTION_TYPE_PROPERTY "type"
-
-#define CHILDREN_COUNT 1
 
 static const QList<QString> FORBIDDEN_ENTRIES { ":" };
 
@@ -61,6 +59,7 @@ void ActionItem::readProperties(Bundle& bundle)
 		action = new CommandAction("", "Unknown Action");
 
 	ui->cmbActionType->setCurrentIndex((int) action->getType());    // Here, we make sure we have the right type set
+	ui->cmbIcon->setCurrentText(action->getIcon().name);
 	setAction(action);
 
 	initBundle();
@@ -73,8 +72,9 @@ void ActionItem::writeProperties(Bundle& bundle)
 
 void ActionItem::setupSignalsAndSlots()
 {
-	connect(ui->cmbActionType, SIGNAL(currentIndexChanged(int)), this, SLOT(onActionTypeChanged(int)));
 	connect(ui->edtName, &QLineEdit::textChanged, this, &ActionItem::onNameChanged);
+	connect(ui->cmbActionType, SIGNAL(currentIndexChanged(int)), this, SLOT(onActionTypeChanged(int)));
+	connect(ui->cmbIcon, &QComboBox::currentTextChanged, this, &ActionItem::onIconChanged);
 }
 
 void ActionItem::setupUI()
@@ -83,6 +83,13 @@ void ActionItem::setupUI()
 
 	setupActions();
 	setAction(Action::Type::COMMAND);
+	setupIcons();
+}
+
+void ActionItem::setupIcons()
+{
+	for (const ImageResource& img : IconManager::instance()->getIconList())
+		ui->cmbIcon->addItem(img.image, img.name);
 }
 
 void ActionItem::setupDialogButtons()
@@ -203,11 +210,6 @@ void ActionItem::accept()
 	QDialog::accept();
 }
 
-void ActionItem::onActionTypeChanged(int index)
-{
-	setAction((Action::Type) index);
-}
-
 void ActionItem::onNameChanged(const QString& name)
 {
 	if (checkName(name))
@@ -219,4 +221,14 @@ void ActionItem::onNameChanged(const QString& name)
 	{
 		setValid(false);
 	}
+}
+
+void ActionItem::onActionTypeChanged(int index)
+{
+	setAction((Action::Type) index);
+}
+
+void ActionItem::onIconChanged(const QString& name)
+{
+	m_Action->setIcon(IconManager::instance()->getIcon(name));
 }

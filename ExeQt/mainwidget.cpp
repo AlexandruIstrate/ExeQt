@@ -36,6 +36,7 @@
 #include "remotecontrol.h"
 #include "remoteauthorizations.h"
 #include "networkmanager.h"
+#include "iconmanager.h"
 
 #include "constants.h"
 #include "common.h"
@@ -194,7 +195,6 @@ void MainWidget::setupUI()
 {
 	setupTrayIcon();
 	setupTabs();
-	AddGroupDialog::initIcons();
 
 	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, size(), qApp->desktop()->availableGeometry()));
 }
@@ -379,18 +379,13 @@ void MainWidget::onSyncSelected()
 	if (!AuthManager::instance()->isAuth())
 	{
 		LoginDialog* loginDialog = new LoginDialog(this);
-		if (loginDialog->exec() != QDialog::DialogCode::Accepted)
+		if (loginDialog->exec() == QDialog::DialogCode::Rejected)
 			return;
 	}
 	else
 	{
 		AuthManager::instance()->syncActions();
 	}
-
-	removeTabs();
-	setupTabs();
-
-	loadFromFile();
 }
 
 void MainWidget::onRemoteControlSelected()
@@ -421,7 +416,8 @@ void MainWidget::onQuit()
 
 	saveToFile();
 
-	if (AuthManager::instance()->isAuth())
+	if (AuthManager::instance()->isAuth() &&
+		AuthManager::instance()->shouldSaveOnExit())
 	{
 		m_TrayIcon->showMessage(tr("Closing down..."), tr("ExeQt is saving your actions to the cloud an will close in a few moments..."));
 		m_RequestManager->uploadFile(QUrl(Constants::getUploadPath()), Common::getSaveFilePath());	// Overwrite old cloud file with new one
