@@ -1,0 +1,3 @@
+[submodule "ExeQt/lib/qt-solutions"]
+	path = ExeQt/lib/qt-solutions
+	url = https://github.com/qtproject/qt-solutions.git

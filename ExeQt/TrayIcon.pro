@@ -136,8 +136,7 @@ FORMS += \
 RESOURCES += \
     resources.qrc
 
-#include($$PWD/libs/singleapplication/src/qtsingleapplication.pri)
-include($$PWD/lib/qtsingleapplication/src/qtsingleapplication.pri)
+include($$PWD/lib/qt-solutions/qtsingleapplication/src/qtsingleapplication.pri)
 
 DISTFILES += \
     style.qss
