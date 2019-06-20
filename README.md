@@ -59,6 +59,9 @@ You must first have one of the C++ compilers (Qt pretty much supports all compil
 ## Testing
 ExeQt was tested on Windows 10 and it offers perfect compatibility with Microsoft's newest operating system.
 
+## Contributing
+If you would like to help this project grow, I would really appreciate it. Generaly the things that need help will be listed as issues. However if you have a good idea, nobody says it can't make it into the project!
+
 ## Disclaimer
 I do not own any of the icons used in this project. I thank the wonderful people at [findicons.com](findicons.com), [iconarchive.com](iconarchive.com) and [Icons8](icons8.com) for making these available to the public for free.
 My thanks to the person that took the picture I used for my desktop background. Without you, my screenshots wouldn't have looked as good!
