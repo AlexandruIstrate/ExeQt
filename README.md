@@ -42,6 +42,22 @@ Running actions on another computer on the LAN
 
 ![LAN2](./Images/lan2.png)
 
+## Upcoming Features
+- [ ] Start minimised
+- [ ] Executable icon
+- [ ] Application installer
+- [x] Tooltips
+- [x] Keyboard shortcuts
+- [x] Merge dialog
+- [ ] Unique session ID for cloud syncs
+- [ ] Parameters for user input
+- [ ] User input for command actions
+- [ ] Working directory setting for commands
+- [ ] Scheduled execution
+- [ ] Restricted acces for certain groups when using the remote control feature
+- [ ] A better algorithm for password hashing
+- [ ] Better web API
+
 ## Building from Source
 
 You must first have one of the C++ compilers (Qt pretty much supports all compilers including MSVC, GCC and MinGW) and the Qt Toolkit installed on your machine
