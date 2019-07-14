@@ -6,7 +6,7 @@ A nifty little utility for pinning commands, applications or links to the system
 ![Main Image](./Images/main.png)
 
 ## How does it work?
-ExeQt uses the system's native tray to display groups of actions with the things the user loves most such as their documents, the folder with pictures of cats or that site that lets you see how you would look in 50 years. Actions are cool little shortcut-like items that make your life easier. Anything you can run or execute on your machine can be put in one convenient menu that you can acces anywhere on your operating system.
+ExeQt uses the system's native tray to display groups of actions with the things you love most such documents, pictures and even websites. Actions are cool little shortcut-like items that make your life easier. Anything you can run or execute on your machine can be put in one convenient menu that you can acces anywhere on your operating system.
 
 ## Features
 - Ability to create shortcuts for shell commands, executable files, web links or any other file on the system
@@ -80,5 +80,5 @@ If you would like to help this project grow, I would really appreciate it. Gener
 
 ## Disclaimer
 I do not own any of the icons used in this project. I thank the wonderful people at [findicons.com](findicons.com), [iconarchive.com](iconarchive.com) and [Icons8](icons8.com) for making these available to the public for free.
-My thanks to the person that took the picture I used for my desktop background. Without you, my screenshots wouldn't have looked as good!
+My thanks to the person that took the picture I used for my desktop background.
 Also on the list of things not entirely made by me is the nice ExeQt WordArt that I used as the picture at the top of this page. That image was made with a free tool from [WordArt.com](https://wordart.com/)
