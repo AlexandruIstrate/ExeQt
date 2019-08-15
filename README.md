@@ -14,7 +14,7 @@ ExeQt uses the system's native tray to display groups of actions with the things
 - Support for action sets which make running multiple things together really easy by grouping the existing actions
 - Actions that save locally in an XML format
 - Cross platform (Windows, macOS and Linux) thanks to the cross platform Qt Toolkit
-- Actions can be synced across computers using a free cloud service (andu.internals.ro) provided for the app
+- Actions can be synced across computers using a free cloud service that is provided for the app
 - Communication with other computers in LAN running ExeQt allows you to call actions on another computer in your house or office remotely from the comfort of your computer
 
 ## Some sugestive pictures
