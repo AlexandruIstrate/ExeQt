@@ -17,7 +17,7 @@ ExeQt uses the system's native tray to display groups of actions with the things
 - Actions can be synced across computers using a free cloud service that is provided for the app
 - Communication with other computers in LAN running ExeQt allows you to call actions on another computer in your house or office remotely from the comfort of your computer
 
-## Some sugestive pictures
+## User interface
 Easy to work with, featuring an easy to use user interface for manging your actions
 
 ![Actions](./Images/actions.png)
@@ -69,7 +69,7 @@ You must first have one of the C++ compilers (Qt pretty much supports all compil
 - **Linux:** The project must be first built using the qMake script (or the QtCreator IDE) and then if you want to create a standalone executable you must use the tool [linuxdeployqt](https://github.com/probonopd/linuxdeployqt) which creates an AppImage so that you can run ExeQt on a system without having Qt installed
 
 ## Libraries used
-- Qt Toolkit
+- [Qt Toolkit](https://www.qt.io/)
 - [qtsingleapplication](https://github.com/qtproject/qt-solutions/tree/master/qtsingleapplication) from the [qt-solutions](https://github.com/qtproject/qt-solutions) project
 
 ## Testing
