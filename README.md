@@ -58,6 +58,9 @@ Running actions on another computer on the LAN
 - [ ] A better algorithm for password hashing
 - [ ] Better web API
 
+## Installation
+The latest version of ExeQt can be found on the [Releases](https://github.com/AlexandruIstrate/ExeQt/releases) page.
+
 ## Building from Source
 
 You must first have one of the C++ compilers (Qt pretty much supports all compilers including MSVC, GCC and MinGW) and the Qt Toolkit installed on your machine
