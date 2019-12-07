@@ -140,3 +140,7 @@ include($$PWD/lib/qt-solutions/qtsingleapplication/src/qtsingleapplication.pri)
 
 DISTFILES += \
     style.qss
+
+#ifdef Q_WS_WIN
+RC_ICONS = $$PWD/assets/images/app-icon.ico
+#endif
