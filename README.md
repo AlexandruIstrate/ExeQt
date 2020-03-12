@@ -75,9 +75,6 @@ You must first have one of the C++ compilers (Qt pretty much supports all compil
 - [Qt Toolkit](https://www.qt.io/)
 - [qtsingleapplication](https://github.com/qtproject/qt-solutions/tree/master/qtsingleapplication) from the [qt-solutions](https://github.com/qtproject/qt-solutions) project
 
-## Testing
-ExeQt was tested on Windows 10 and it offers perfect compatibility with Microsoft's newest operating system.
-
 ## Contributing
 If you would like to help this project grow, I would really appreciate it. Generaly the things that need help will be listed as issues. However if you have a good idea, nobody says it can't make it into the project!
 
