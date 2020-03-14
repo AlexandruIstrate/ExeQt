@@ -49,14 +49,20 @@ bool ActionItem::checkBundle(const Bundle&) const
 void ActionItem::readProperties(Bundle& bundle)
 {
 	if (!checkBundle(bundle))
+	{
 		return;
+	}
 
 	Action* action = Action::createFromTagName(bundle.getName(), this);
 
 	if (action)
+	{
 		action->readProperties(bundle);
+	}
 	else
+	{
 		action = new CommandAction("", "Unknown Action");
+	}
 
 	ui->cmbActionType->setCurrentIndex((int) action->getType());    // Here, we make sure we have the right type set
 	ui->cmbIcon->setCurrentText(action->getIcon().name);
@@ -89,7 +95,9 @@ void ActionItem::setupUI()
 void ActionItem::setupIcons()
 {
 	for (const ImageResource& img : IconManager::instance()->getIconList())
+	{
 		ui->cmbIcon->addItem(img.image, img.name);
+	}
 }
 
 void ActionItem::setupDialogButtons()
@@ -124,7 +132,9 @@ void ActionItem::setAction(Action* action)
 	setActionWidget();
 
 	if (ui->widgetStack->count() > 1)
+	{
 		ui->widgetStack->removeWidget(0);
+	}
 
 	ui->lblDescription->setToolTip(action->getDescription());
 }
@@ -170,7 +180,9 @@ bool ActionItem::checkName(const QString& name)
 	for (const ActionTab* tab : MainWidget::instance()->getActionTabs())
 	{
 		if (tab != getActionTab())
+		{
 			continue;
+		}
 
 		for (const ActionItem* actionItem : tab->getActionItems())
 		{
@@ -202,10 +214,14 @@ void ActionItem::initBundle()
 void ActionItem::accept()
 {
 	if (m_Valid)
+	{
 		m_Action->setName(ui->edtName->text());
+	}
 
 	if (!m_Action->validate())
+	{
 		return;
+	}
 
 	QDialog::accept();
 }

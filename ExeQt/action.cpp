@@ -25,12 +25,10 @@
 Action::Action(const QString& name, Type type, ImageResource icon, QWidget* parent)
 	: QWidget { parent }, m_Type { type }, m_Name { name }, m_Icon { icon }
 {
-
 }
 
 Action::~Action()
 {
-
 }
 
 QIcon Action::getActionTypeIcon() const
@@ -46,10 +44,14 @@ QString Action::getTagName() const
 bool Action::checkBundle(const Bundle& bundle) const
 {
 	if (!Saveable::checkBundle(bundle))
+	{
 		return false;
+	}
 
 	if (!checkProperty(bundle, NAME_PROPERTY))
+	{
 		return false;
+	}
 
 	return true;
 }
@@ -57,7 +59,9 @@ bool Action::checkBundle(const Bundle& bundle) const
 void Action::readProperties(Bundle& bundle)
 {
 	if (!checkBundle(bundle))
+	{
 		return;
+	}
 
 	m_Name = bundle.get(NAME_PROPERTY);
 	m_Type = getActionTypeFromTag(bundle.getName());
@@ -167,16 +171,24 @@ QString Action::getActionTag(Action::Type type)
 Action::Type Action::getActionTypeFromTag(const QString& tag)
 {
 	if (tag == "commandAction")
+	{
 		return Type::COMMAND;
+	}
 
 	if (tag == "applicationAction")
+	{
 		return Type::APPLICATION;
+	}
 
 	if (tag == "linkAction")
+	{
 		return Type::LINK;
+	}
 
 	if (tag == "setAction")
+	{
 		return Type::SET;
+	}
 
 	return Type::UNKNOWN;
 }

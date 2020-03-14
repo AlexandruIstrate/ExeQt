@@ -77,13 +77,17 @@ void GroupConfigure::showActionGroups()
 	ui->lstGroups->clear();
 
 	for (ActionTab* tab : m_ActionTabs)
+	{
 		new QListWidgetItem(tab->getIcon().icon, tab->getName(), ui->lstGroups);
+	}
 }
 
 bool GroupConfigure::checkDelete()
 {
 	if (!SettingsRegistry::instance()->get(Settings::CONFIRM_DELETE).toBool())
+	{
 		return true;
+	}
 
 	QMessageBox dialog(QMessageBox::Icon::Question, tr("Remove Action Group"),
 					   tr("Are you sure you want to remove this action group?"), QMessageBox::Yes | QMessageBox::No, this);
@@ -102,11 +106,16 @@ void GroupConfigure::onAdd()
 void GroupConfigure::onRemove()
 {
 	int selectedItem = getSelectedItem();
+
 	if (selectedItem == -1)
+	{
 		return;
+	}
 
 	if (!checkDelete())
+	{
 		return;
+	}
 
 	MainWidget* mw = (MainWidget*) parent();
 	mw->removeActionGroup(selectedItem);

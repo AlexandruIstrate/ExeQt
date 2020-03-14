@@ -83,7 +83,9 @@ void ActionRow::loadGroups()
 	m_CmbGroup->clear();
 
 	for (ActionTab* tab : getActionGroups())
+	{
 		m_CmbGroup->addItem(tab->getIcon().icon, tab->getName());
+	}
 
 	m_ActionGroup = m_CmbGroup->currentText();
 }
@@ -95,14 +97,18 @@ void ActionRow::loadActions()
 	for (ActionTab* tab : getActionGroups())
 	{
 		if (tab->getName() != m_CmbGroup->currentText())
+		{
 			continue;
+		}
 
 		for (ActionItem* actionItem : tab->getActionItems())
 		{
 			Action* action = actionItem->getAction();
 
 			if (action != getParent()->getParentAction())
+			{
 				m_CmbAction->addItem(action->getActionTypeIcon(), actionItem->getName());
+			}
 		}
 	}
 
@@ -161,14 +167,19 @@ ActionSetTree::ActionSetTree(Action* parent) : m_ParentAction { parent }
 ActionSetTree::~ActionSetTree()
 {
 	for (int i = 0; i < m_Rows.size(); ++i)
+	{
 		delete m_Rows[i];
+	}
 }
 
 ActionReferenceList ActionSetTree::getActionRefferenceList()
 {
 	ActionReferenceList ret;
+
 	for (ActionRow* row : m_Rows)
+	{
 		ret.append(row->getActionRefference());
+	}
 
 	return ret;
 }
@@ -195,8 +206,11 @@ void ActionSetTree::addRow(const ActionReference& ref)
 void ActionSetTree::removeRow()
 {
 	int index = currentIndex().row();
+
 	if (index == -1)
+	{
 		return;
+	}
 
 	delete m_Rows.takeAt(index);
 	updateRows();
@@ -205,8 +219,11 @@ void ActionSetTree::removeRow()
 void ActionSetTree::moveRowUp()
 {
 	int index = currentIndex().row();
+
 	if (index == -1 || index == 0)
+	{
 		return;
+	}
 
 	ActionRow* row = (ActionRow*) takeTopLevelItem(index);
 	insertTopLevelItem(index - 1, row);
@@ -223,8 +240,11 @@ void ActionSetTree::moveRowUp()
 void ActionSetTree::moveRowDown()
 {
 	int index = currentIndex().row();
+
 	if (index == -1 || index == topLevelItemCount() - 1)
+	{
 		return;
+	}
 
 	ActionRow* row = (ActionRow*) takeTopLevelItem(index);
 	insertTopLevelItem(index + 1, row);
@@ -241,7 +261,9 @@ void ActionSetTree::moveRowDown()
 void ActionSetTree::useList(const ActionReferenceList& list)
 {
 	for (const ActionReference& ref : list)
+	{
 		addRow(ref);
+	}
 }
 
 void ActionSetTree::setup()
@@ -263,14 +285,13 @@ void ActionSetTree::setupHeaders()
 void ActionSetTree::resizeColumns()
 {
 	for (int i = 0; i < columnCount(); ++i)
+	{
 		resizeColumnToContents(i);
+	}
 }
 
 void ActionSetTree::updateRows()
 {
-//	for (int i = 0; i < topLevelItemCount(); ++i)
-//		qDebug() << ((ActionRow*) topLevelItem(i))->getActionRefference().toString();
-
 	emit rowsUpdated(getActionRefferenceList());
 }
 

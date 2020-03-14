@@ -10,7 +10,7 @@
 #include "constants.h"
 #include "settingsregistry.h"
 
-//QString Constants::s_ServerAddress = "https://andu.internals.ro/endpoint";
+//QString Constants::s_ServerAddress = "https://url/endpoint";
 
 QString Constants::getUploadPath()
 {
@@ -28,7 +28,7 @@ QString Constants::getAuthPath()
 }
 
 const QString Constants::DEFAULT_SAVE_FILE_NAME = "exeqt-save.xml";
-const QString Constants::DEFAULT_SERVER_ADDRESS = "https://andu.internals.ro/endpoint";
+const QString Constants::DEFAULT_SERVER_ADDRESS = "https://url/endpoint";
 
 const QString Constants::JSON_PROPERTY_FLAG = "flag";
 const QString Constants::JSON_PROPERTY_MESSSAGE = "msg";

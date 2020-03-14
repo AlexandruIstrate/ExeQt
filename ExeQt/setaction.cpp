@@ -51,7 +51,9 @@ QString SetAction::getDescription() const
 bool SetAction::checkBundle(const Bundle& bundle) const
 {
 	if (!Action::checkBundle(bundle))
+	{
 		return false;
+	}
 
 	return true;
 }
@@ -59,7 +61,9 @@ bool SetAction::checkBundle(const Bundle& bundle) const
 void SetAction::readProperties(Bundle& bundle)
 {
 	if (!checkBundle(bundle))
+	{
 		return;
+	}
 
 	m_Bundle = bundle;
 
@@ -90,10 +94,14 @@ void SetAction::writeProperties(Bundle& bundle)
 void SetAction::execute()
 {
 	if (!checkRecursive())
+	{
 		return;
+	}
 
 	for (Action* action : m_ActionList)
+	{
 		action->execute();
+	}
 }
 
 bool SetAction::validate()
@@ -168,15 +176,21 @@ bool SetAction::checkLinks(ActionList& previousItems)
 		SetAction* setAction = dynamic_cast<SetAction*>(action);
 
 		if (!setAction)
+		{
 			continue;
+		}
 
 		if (previousItems.contains(setAction))
+		{
 			return false;
+		}
 
 		previousItems.append(setAction);
 
 		if (!setAction->checkLinks(previousItems))
+		{
 			return false;
+		}
 	}
 
 	return true;
@@ -223,8 +237,11 @@ void SetAction::onRowsUpdated(ActionReferenceList rowReffList)
 	for (const ActionReference& ref : rowReffList)
 	{
 		Action* action = ref.getAction();
+
 		if (action)
+		{
 			addAction(action);
+		}
 	}
 
 	checkRecursive();

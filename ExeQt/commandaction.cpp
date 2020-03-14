@@ -48,7 +48,9 @@ QString CommandAction::getTagName() const
 bool CommandAction::checkBundle(const Bundle& bundle) const
 {
 	if (!Action::checkBundle(bundle))
+	{
 		return false;
+	}
 
 //	if (!checkProperty(bundle, COMMAND_PROPERTY))
 //		return false;
@@ -59,7 +61,9 @@ bool CommandAction::checkBundle(const Bundle& bundle) const
 void CommandAction::readProperties(Bundle& bundle)
 {
 	if (!checkBundle(bundle))
+	{
 		return;
+	}
 
 	m_Command = bundle.get(COMMAND_PROPERTY);
 	Action::readProperties(bundle);

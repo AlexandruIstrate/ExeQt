@@ -19,12 +19,10 @@
 
 Bundle::Bundle(const QString& name) : m_Name { name }
 {
-
 }
 
 Bundle::Bundle(const Bundle& other) : m_Name { other.m_Name }, m_Values { other.m_Values }, m_Children { other.m_Children }
 {
-
 }
 
 void Bundle::add(const QString& key, QString value)
@@ -72,7 +70,9 @@ QString Bundle::toText() const
 	QString text = QString("Bundle : %1 { ").arg(m_Name);
 
 	for (ValueMap::const_iterator iter = m_Values.constBegin(); iter != m_Values.constEnd(); ++iter)
+	{
 		text.append(QString("%1 : %2; ").arg(iter.key(), iter.value()));
+	}
 
 	text.append("}");
 
@@ -82,8 +82,11 @@ QString Bundle::toText() const
 void writeXMLBundle(Bundle bundle, QXmlStreamWriter& writer)
 {
 	QMap<QString, QString> map = bundle.getValues();
+
 	for (QMap<QString, QString>::const_iterator i = map.constBegin(); i != map.constEnd(); ++i)
+	{
 		writer.writeAttribute(i.key(), i.value());
+	}
 
 	for (int i = 0; i < bundle.getChildrenCount(); ++i)
 	{
@@ -114,8 +117,11 @@ QString Bundle::toXML() const
 bool Bundle::saveToFile(const QString& filePath) const
 {
 	QFile file(filePath);
+
 	if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+	{
 		return false;
+	}
 
 	QTextStream stream(&file);
 	stream << toXML();
@@ -153,6 +159,7 @@ Bundle Bundle::from(const Bundle& source)
 void processBundle(Bundle& bundle, QDomElement& node)
 {
 	QDomNamedNodeMap map = node.attributes();
+
 	for (int i = 0; i < map.length(); ++i)
 	{
 		QDomNode attrib = map.item(i);
@@ -160,6 +167,7 @@ void processBundle(Bundle& bundle, QDomElement& node)
 	}
 
 	QDomNodeList nodes = node.childNodes();
+
 	for (int i = 0; i < nodes.size(); ++i)
 	{
 		QDomElement elem = nodes.at(i).toElement();
@@ -186,8 +194,11 @@ Bundle Bundle::fromXML(const QString& xml)
 Bundle Bundle::fromFile(const QString& fileName)
 {
 	QString text;
+
 	if (!Common::readFromFile(fileName, text))
+	{
 		text = "<mainwidget><mainwidget/>";
+	}
 
 	return Bundle::fromXML(text);
 }
@@ -198,8 +209,6 @@ Bundle Bundle::mergeBundles(const Bundle& bundle1, const Bundle& bundle2)
 
 	for (const Bundle& bundle : bundle2.getChildren())
 	{
-//		qDebug() << "Bundle 2: " << bundle.toText();
-
 		if (!result.hasChild(bundle))
 		{
 			result.addChild(bundle);
@@ -209,7 +218,6 @@ Bundle Bundle::mergeBundles(const Bundle& bundle1, const Bundle& bundle2)
 		for (int i = 0; i < result.getChildrenCount(); ++i)
 		{
 			const Bundle& resultBundle = result.childAt(i);
-//			qDebug() << "Bundle 1: " << resultBundle.toText();
 
 			if (bundle == resultBundle)
 			{

@@ -35,7 +35,9 @@ int SingleInstanceApplication::exec(QWidget* wdg)
 #ifndef Q_OS_WIN32
 	QSharedMemory unixSharedMemory("anotherid");
 	if (unixSharedMemory.attach())
+	{
 		unixSharedMemory.detach();
+	}
 #endif
 
 	QSharedMemory sharedMemory("anotherid");
@@ -56,17 +58,23 @@ int SingleInstanceApplication::exec(QWidget* wdg)
 	if (isRunning)
 	{
 		if (m_OnRunning)
+		{
 			m_OnRunning();
+		}
 
 		qDebug();
 		return 1;
 	}
 
 	if (m_OnStart)
+	{
 		m_OnStart();
+	}
 
 	if (wdg)
+	{
 		wdg->show();
+	}
 
 	return m_App.exec();
 }

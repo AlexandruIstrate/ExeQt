@@ -44,7 +44,6 @@
 Client::Client()
 	: m_Name { SettingsRegistry::instance()->get(Settings::USERNAME).toString() }, m_ID { generateID() }, m_Address { getCurrentIPAddress() }
 {
-
 }
 
 Client::Client(const QString& name, const QString& id, const QString& address, QTcpSocket* socket) :
@@ -69,7 +68,6 @@ Client::Client(const Client& other)
 
 Client::~Client()
 {
-
 }
 
 void Client::setSocket(QTcpSocket* socket)
@@ -104,7 +102,9 @@ void Client::disconnectFromHost() const
 void Client::updateActions(const Bundle& actionBundle) const
 {
 	if (!m_ConnectSocket)
+	{
 		return;
+	}
 
 	NetworkMessage message(JSON_APP_IDENTIFIER);
 	message.setProperty(JSON_KEY_ACTIONS, actionBundle.toXML());
@@ -115,7 +115,9 @@ void Client::updateActions(const Bundle& actionBundle) const
 void Client::callAction(const ActionReference& reference)
 {
 	if (!m_ConnectSocket)
+	{
 		return;
+	}
 
 	NetworkMessage message(JSON_APP_IDENTIFIER);
 	message.setProperty(JSON_KEY_ACTION_TO_RUN, reference.toString());
@@ -146,7 +148,9 @@ bool Client::operator!=(const Client& other) const
 Client& Client::operator=(const Client& other)
 {
 	if (this == &other)
+	{
 		return *this;
+	}
 
 	m_Name = other.m_Name;
 	m_ID = other.m_ID;
@@ -161,7 +165,9 @@ QNetworkInterface Client::getCurrentInterface()
 	for (QNetworkInterface& interface : QNetworkInterface::allInterfaces())
 	{
 		if (!(interface.flags() & QNetworkInterface::IsLoopBack))
+		{
 			return interface;
+		}
 	}
 
 	return QNetworkInterface();
@@ -172,7 +178,9 @@ QString Client::getCurrentIPAddress()
 	for (QHostAddress address : QNetworkInterface::allAddresses())
 	{
 		if (address.protocol() == QAbstractSocket::IPv4Protocol && address != QHostAddress(QHostAddress::LocalHost))
+		{
 			 return address.toString();
+		}
 	}
 
 	return QString();
@@ -193,19 +201,25 @@ void Client::onActionsReceived(const QByteArray& actionsData)
 	NetworkMessage message(JSON_APP_IDENTIFIER, actionsData);
 
 	if (message.hasError())
+	{
 		return;
+	}
 
 	if (message.hasProperty(JSON_KEY_ACTIONS))
 	{
 		QString bundle = message.getProperty(JSON_KEY_ACTIONS);
+
 		if (bundle.isEmpty())
+		{
 			return;
+		}
 
 		emit actionsUpdated(Bundle::fromXML(bundle));
 	}
 	else if(message.hasProperty(JSON_KEY_ACTION_TO_RUN))
 	{
 		ActionReference ref(message.getProperty(JSON_KEY_ACTION_TO_RUN));
+
 		if (!ref.isOk())
 		{
 			qDebug() << "Invalid remote action reference!";
@@ -280,7 +294,9 @@ void NetworkManager::requestActionUpdate()
 void NetworkManager::updateActions(const Bundle& actionBundle)
 {
 	for (const Client& client : m_ConnectedFrom)
+	{
 		client.updateActions(actionBundle);
+	}
 
 	m_ActionsUpToDate = true;
 }
@@ -300,10 +316,14 @@ void NetworkManager::stopBroadcast()
 bool NetworkManager::connectTo(Client client)
 {
 	if (!client.isValid())
+	{
 		return false;
+	}
 
 	if (m_ConnectedTo.contains(client))
+	{
 		return false;
+	}
 
 	connectToInternal(client);
 	m_ConnectedTo.append(client);
@@ -316,10 +336,14 @@ bool NetworkManager::connectTo(Client client)
 bool NetworkManager::disconnectFrom(const Client& client)
 {
 	if (!client.isValid())
+	{
 		return false;
+	}
 
 	if (!m_ConnectedTo.contains(client))
+	{
 		return false;
+	}
 
 	disconnectFromInternal(client);
 	m_ConnectedTo.removeOne(client);
@@ -344,13 +368,17 @@ Client* NetworkManager::getClientFromID(const QString& id)
 	for (Client& client : m_ConnectedTo)
 	{
 		if (client.getID() == id)
+		{
 			return &client;
+		}
 	}
 
 	for (Client& client : m_ConnectedFrom)
 	{
 		if (client.getID() == id)
+		{
 			return &client;
+		}
 	}
 
 	return nullptr;
@@ -413,7 +441,9 @@ QByteArray NetworkManager::buildConnectMessage(const Client& client)
 void NetworkManager::acceptClientConnection(const Client& client)
 {
 	if (m_ConnectedFrom.contains(client))
+	{
 		return;
+	}
 
 	m_ConnectedFrom.append(client);
 	NetworkManager::instance()->requestActionUpdate();
@@ -442,7 +472,9 @@ QString stripAddress(const QString& address)
 	const QChar separator = ':';
 
 	if (!address.contains(separator))
+	{
 		return address;
+	}
 
 	int index = address.lastIndexOf(separator);
 	return address.mid(address.lastIndexOf(separator) + 1, address.size() - index);
@@ -461,10 +493,14 @@ void NetworkManager::onPendingDatagram()
 		NetworkMessage message(JSON_APP_IDENTIFIER, datagram);
 
 		if (message.hasError())
+		{
 			continue;
+		}
 
 		if (!(message.hasProperty(JSON_KEY_ID)))
+		{
 			continue;
+		}
 
 		Client client(message.getProperty(JSON_KEY_NAME), message.getProperty(JSON_KEY_ID), stripAddress(address.toString()));
 		emit clientAvailable(client);
@@ -499,9 +535,13 @@ void ActionServer::shutdown()
 void ActionServer::setListening(bool listening)
 {
 	if (listening)
+	{
 		m_TcpServer.listen(QHostAddress::Any, PORT);
+	}
 	else
+	{
 		m_TcpServer.close();
+	}
 }
 
 void ActionServer::setupSignalsAndSlots()
@@ -531,9 +571,13 @@ void ActionServer::parseRequest(QTcpSocket* socket)
 			QMessageBox::question(nullptr, tr("New Connection"), tr("Accept connection from client %1").arg(client.getUnlocalizedName()), QMessageBox::Yes | QMessageBox::No);
 
 	if (reply == QMessageBox::Yes)
+	{
 		NetworkManager::instance()->acceptClientConnection(client);
+	}
 	else
+	{
 		client.disconnectFromHost();
+	}
 }
 
 void ActionServer::disconnectSocket(QTcpSocket* socket)
@@ -541,7 +585,9 @@ void ActionServer::disconnectSocket(QTcpSocket* socket)
 	for (const Client& client : NetworkManager::instance()->getConnectedFromClients())
 	{
 		if (client.getSocket() == socket)
+		{
 			NetworkManager::instance()->closeClientConnection(client);
+		}
 	}
 }
 

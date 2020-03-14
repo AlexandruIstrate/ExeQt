@@ -15,7 +15,6 @@
 
 Task::Task()
 {
-
 }
 
 void Task::runTask()
@@ -30,7 +29,9 @@ TaskManager* TaskManager::s_Instance = nullptr;
 TaskManager::~TaskManager()
 {
 	for (Task* task : m_Tasks)
+	{
 		delete task;
+	}
 }
 
 void TaskManager::init()
@@ -56,5 +57,7 @@ void TaskManager::removeTask(Task* task)
 void TaskManager::run()
 {
 	for (Task* task : m_Tasks)
+	{
 		task->runTask();
+	}
 }

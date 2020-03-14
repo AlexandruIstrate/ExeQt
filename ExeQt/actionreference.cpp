@@ -17,7 +17,6 @@
 ActionReference::ActionReference(const QString& group, const QString& name)
 	: m_ActionGroup { group }, m_ActionName { name }
 {
-
 }
 
 ActionReference::ActionReference(const QString& actionString)
@@ -27,7 +26,6 @@ ActionReference::ActionReference(const QString& actionString)
 
 ActionReference::~ActionReference()
 {
-
 }
 
 bool ActionReference::isValid() const
@@ -42,7 +40,9 @@ bool ActionReference::exists() const
 		for (ActionItem* actionItem : tab->getActionItems())
 		{
 			if (tab->getName() == m_ActionGroup && actionItem->getName() == m_ActionName)
+			{
 				return true;
+			}
 		}
 	}
 
@@ -66,7 +66,9 @@ Action::Type ActionReference::getActionType() const
 		for (ActionItem* actionItem : tab->getActionItems())
 		{
 			if (tab->getName() == m_ActionGroup && actionItem->getName() == m_ActionName)
+			{
 				return actionItem->getAction()->getType();
+			}
 		}
 	}
 
@@ -91,7 +93,9 @@ Action* ActionReference::getActionInternal() const
 		for (ActionItem* actionItem : tab->getActionItems())
 		{
 			if (tab->getName() == m_ActionGroup && actionItem->getName() == m_ActionName)
+			{
 				return actionItem->getAction();
+			}
 		}
 	}
 
@@ -101,7 +105,9 @@ Action* ActionReference::getActionInternal() const
 void ActionReference::parseString(const QString& str)
 {
 	if (!str.contains(SEPARATOR))
+	{
 		return;
+	}
 
 	QStringList parts = str.split(SEPARATOR);
 	m_ActionGroup = parts.at(0);

@@ -13,7 +13,6 @@ IconManager* IconManager::s_Instance = nullptr;
 
 IconManager::IconManager()
 {
-
 }
 
 void IconManager::registerIcon(ImageResource image)
@@ -31,7 +30,9 @@ ImageResource IconManager::getIcon(const QString& name) const
 	for (const ImageResource& img : m_Icons)
 	{
 		if (img.name == name)
+		{
 			return img;
+		}
 	}
 
 	return ImageResource("Not Found", QIcon(":/assets/images/action-custom-icons/notfound.png"));

@@ -49,7 +49,9 @@ QString ApplicationAction::getTagName() const
 bool ApplicationAction::checkBundle(const Bundle& bundle) const
 {
 	if (!Action::checkBundle(bundle))
+	{
 		return false;
+	}
 
 //	if (!checkProperty(bundle, APP_PATH_PROPERTY))
 //		return false;
@@ -60,7 +62,9 @@ bool ApplicationAction::checkBundle(const Bundle& bundle) const
 void ApplicationAction::readProperties(Bundle& bundle)
 {
 	if (!checkBundle(bundle))
+	{
 		return;
+	}
 
 	m_AppPath = bundle.get(APP_PATH_PROPERTY);
 	Action::readProperties(bundle);
@@ -101,11 +105,16 @@ void ApplicationAction::execute()
 bool ApplicationAction::validate()
 {
 	if (QUrl(m_AppPath).isValid())
+	{
 		return true;
+	}
 
 	QMessageBox dialog(QMessageBox::Icon::Question, tr("Invalid Path"), tr("The path you supplied is invalid and it might not work. Are you sure you want to use it?"), QMessageBox::Yes | QMessageBox::No);
+	
 	if (dialog.exec() == QMessageBox::Yes)
+	{
 		return true;
+	}
 
 	return false;
 }
@@ -128,7 +137,9 @@ void ApplicationAction::onBrowse()
 #endif
 
 	if (dialog.exec() == QDialog::DialogCode::Rejected)
+	{
 		return;
+	}
 
 	ui->edtPath->setText(QDir::toNativeSeparators(dialog.selectedFiles().at(0)));
 }

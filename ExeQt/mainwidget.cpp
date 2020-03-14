@@ -83,8 +83,11 @@ QIcon MainWidget::getTabIcon(int index)
 void MainWidget::addNewActionGroup()
 {
 	AddGroupDialog* addDialog = new AddGroupDialog(this);
+
 	if (addDialog->exec() == QDialog::DialogCode::Rejected)
+	{
 		return;
+	}
 
 	ActionTab* newTab = new ActionTab(addDialog->getName(), addDialog->getIcon(), this);
 	addTab(newTab);
@@ -104,7 +107,9 @@ void MainWidget::removeActionGroup(int index)
 	ui->tabGroup->setCurrentIndex(getSelectedTabIndex() - 1);
 
 	if (getTabCount() == 1)
+	{
 		ui->tabGroup->setTabEnabled(getTabCount() - 1, true);
+	}
 }
 
 QString MainWidget::getTagName() const
@@ -115,7 +120,9 @@ QString MainWidget::getTagName() const
 void MainWidget::readProperties(Bundle& bundle)
 {
 	if (!checkBundle(bundle))
+	{
 		return;
+	}
 
 	for (int i = 0; i < bundle.getChildrenCount(); ++i)
 	{
@@ -268,10 +275,14 @@ void MainWidget::openGroupConfigureMenu()
 void MainWidget::reloadTabs()
 {
 	while (getTabCount() > 1)
+	{
 		ui->tabGroup->removeTab(0);
+	}
 
 	for (ActionTab* tab : m_ActionTabs)
+	{
 		insertTab(tab);
+	}
 
 	int selectedTab = getSelectedTabIndex();
 	ui->tabGroup->setCurrentIndex(selectedTab < getTabCount() ? selectedTab : getTabCount() - 1);
@@ -280,7 +291,9 @@ void MainWidget::reloadTabs()
 void MainWidget::removeTabs()
 {
 	for (ActionTab* tab : m_ActionTabs)
+	{
 		removeTab(tab);
+	}
 
 	ui->tabGroup->clear();
 }
@@ -318,7 +331,9 @@ QString MainWidget::parseResponse(const QString& jsonText)
 	QString message = jsonObj[Constants::JSON_PROPERTY_MESSSAGE].toString();
 
 	if (flag != Constants::FLAG_OK)
+	{
 		QMessageBox::critical(this, tr("Upload Failed"), message);
+	}
 
 	return message;
 }
@@ -349,8 +364,11 @@ void MainWidget::onIconActivated(QSystemTrayIcon::ActivationReason reason)
 
 void MainWidget::onTabSelected(int index)
 {
-	if (index == ui->tabGroup->count() - 1 || index == -1) // Add a new tab if we selected the add tab, which is always last
+	// Add a new tab if we selected the add tab, which is always last
+	if (index == ui->tabGroup->count() - 1 || index == -1)
+	{
 		addNewActionGroup();
+	}
 }
 
 void MainWidget::onAddTab()
@@ -379,8 +397,11 @@ void MainWidget::onSyncSelected()
 	if (!AuthManager::instance()->isAuth())
 	{
 		LoginDialog* loginDialog = new LoginDialog(this);
+
 		if (loginDialog->exec() == QDialog::DialogCode::Rejected)
+		{
 			return;
+		}
 	}
 	else
 	{
@@ -407,12 +428,18 @@ void MainWidget::onSettingsSelected()
 
 void MainWidget::onQuit()
 {
-	if (m_ShouldQuit)	// The user has already selected "Quit". We are now waiting for the cloud sync to finish.
+	// The user has already selected "Quit". We are now waiting for the cloud sync to finish.
+	if (m_ShouldQuit)
+	{
 		return;
+	}
 
 	QMessageBox dialog(QMessageBox::Icon::Question, tr("Exit"), tr("Are you sure you want to exit?"), QMessageBox::Yes | QMessageBox::No);
+
 	if (dialog.exec() == QMessageBox::No)
+	{
 		return;
+	}
 
 	saveToFile();
 
@@ -446,13 +473,17 @@ void MainWidget::onRequestFinished(QNetworkReply* reply, bool timedOut)
 	parseResponse(reply->readAll());
 
 	if (m_ShouldQuit)
+	{
 		qApp->quit();
+	}
 }
 
 void MainWidget::onActionsCanUpdate()
 {
 	if (!NetworkManager::instance()->hasConnectedClients())
+	{
 		return;
+	}
 
 	qDebug() << "Updating actions";
 

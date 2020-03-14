@@ -87,13 +87,19 @@ void ActionDisplayTree::setActionBundle(const Bundle& bundle)
 QString getBundleActionTag(const Bundle& bundle)
 {
 	if (bundle.hasKey("command"))
+	{
 		return bundle.get("command");
+	}
 
 	if (bundle.hasKey("appPath"))
+	{
 		return bundle.get("appPath");
+	}
 
 	if (bundle.hasKey("link"))
+	{
 		return bundle.get("link");
+	}
 
 	return QString();
 }
@@ -104,13 +110,19 @@ void ActionDisplayTree::createTreeItem(TreeItem* parent, const Bundle& actionBun
 	QString name = actionBundle.getName();
 
 	if (name == "actionTab")
+	{
 		type = TreeItem::Type::TAB;
+	}
 
 	if (QStringList { "commandAction", "applicationAction", "linkAction", "setAction" }.contains(name))
+	{
 		type = TreeItem::Type::ACTION;
+	}
 
 	if (name == "actionReference")
+	{
 		type = TreeItem::Type::ACTION_REFERENCE;
+	}
 
 	TreeItem* childWidget;
 
@@ -155,5 +167,7 @@ void ActionDisplayTree::createTreeItem(TreeItem* parent, const Bundle& actionBun
 	}
 
 	for (const Bundle& child : actionBundle.getChildren())
+	{
 		createTreeItem(childWidget, child);
+	}
 }

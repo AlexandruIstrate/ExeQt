@@ -97,7 +97,9 @@ int AuthConnectTab::getClientIndex(const Client& client)
 	for (int i = 0; i < m_Clients.size(); ++i)
 	{
 		if (m_Clients[i] == client)
+		{
 			return i;
+		}
 	}
 
 	return -1;
@@ -114,8 +116,11 @@ void AuthConnectTab::removeClient(const Client& client)
 	m_Clients.removeOne(client);
 
 	int index = getClientIndex(client);
+
 	if (index != -1)
+	{
 		delete ui->lstDevices->takeItem(index);
+	}
 }
 
 void AuthConnectTab::clearClients()
@@ -143,9 +148,13 @@ void AuthConnectTab::stopBroadcast()
 void AuthConnectTab::onBroadcast()
 {
 	if (NetworkManager::instance()->getState() == NetworkManager::State::IDLE)
+	{
 		startBroadcast();
+	}
 	else
+	{
 		stopBroadcast();
+	}
 }
 
 void AuthConnectTab::onClientAvailable(Client client)
@@ -154,15 +163,21 @@ void AuthConnectTab::onClientAvailable(Client client)
 
 	// If the client is not the current device
 	if (NetworkManager::instance()->getThisClient()->getLocalizedName() == client.getLocalizedName())
+	{
 		return;
+	}
 
 	// If already connected, skip it
 	if (NetworkManager::instance()->getConnectedToClients().contains(client))
+	{
 		return;
+	}
 
 	// If the client is in the list, skip it
 	if (getClientIndex(client) != -1)
+	{
 		return;
+	}
 
 	addClient(client);
 }
@@ -170,8 +185,11 @@ void AuthConnectTab::onClientAvailable(Client client)
 void AuthConnectTab::onConnect()
 {
 	int index = getSelectedIndex();
+
 	if (index == -1)
+	{
 		return;
+	}
 
 	NetworkManager::instance()->connectTo(m_Clients[index]);
 
@@ -181,8 +199,11 @@ void AuthConnectTab::onConnect()
 void AuthConnectTab::onGetInfo()
 {
 	int index = getSelectedIndex();
+
 	if (index == -1)
+	{
 		return;
+	}
 
 	const Client& client = m_Clients.at(index);
 

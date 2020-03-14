@@ -30,7 +30,9 @@ void WritableSocket::onConnect()
 {
 	qint64 size = m_Socket->write(m_Data);
 	if (size != m_Data.size())
+	{
 		QMessageBox::critical(nullptr, tr("Network Error"), tr("A network communication error has ocurred!"));
+	}
 }
 
 void WritableSocket::onError(QAbstractSocket::SocketError error)
@@ -43,7 +45,9 @@ void WritableSocket::onError(QAbstractSocket::SocketError error)
 BufferedSocket::BufferedSocket(QTcpSocket* socket) : m_BufferSocket { socket }
 {
 	if (m_BufferSocket)
+	{
 		connect(m_BufferSocket, &QTcpSocket::readyRead, this, &BufferedSocket::onReadyRead);
+	}
 }
 
 void BufferedSocket::setBufferSocket(QTcpSocket* socket)

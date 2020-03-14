@@ -60,7 +60,9 @@ QString ActionTab::getTagName() const
 bool ActionTab::checkBundle(const Bundle& bundle) const
 {
 	if (!checkProperty(bundle, NAME_PROPERTY) || !checkProperty(bundle, ICON_PROPERTY))
+	{
 		return false;
+	}
 
 	return true;
 }
@@ -105,7 +107,9 @@ void ActionTab::removeTrayIcon()
 bool ActionTab::checkDelete()
 {
 	if (!SettingsRegistry::instance()->get(Settings::CONFIRM_DELETE).toBool())
+	{
 		return true;
+	}
 
 	QMessageBox dialog(QMessageBox::Icon::Question, tr("Remove Action"),
 					   tr("Are you sure you want to remove this action?"), QMessageBox::Yes | QMessageBox::No, this);
@@ -209,8 +213,11 @@ void ActionTab::removeGhostAction()
 void ActionTab::onActionAdd()
 {
 	ActionItem* action = new ActionItem(this);
+
 	if (!action->exec())
+	{
 		return;
+	}
 
 	removeGhostAction();
 	addAction(action);
@@ -221,11 +228,16 @@ void ActionTab::onActionAdd()
 void ActionTab::onActionRemove()
 {
 	int line = ui->actionList->currentRow();
+
 	if (line == -1)
+	{
 		return;
+	}
 
 	if (!checkDelete())
+	{
 		return;
+	}
 
 	removeAction(m_ActionItems[line]);
 
@@ -235,8 +247,11 @@ void ActionTab::onActionRemove()
 void ActionTab::onActionEdit()
 {
 	int line = ui->actionList->currentRow();
+
 	if (line == -1)
+	{
 		return;
+	}
 
 	m_ActionItems[line]->exec();
 	updateActions();

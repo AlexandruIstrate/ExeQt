@@ -57,6 +57,7 @@ int main(int argc, char* argv[])
 		StyleManager::instance()->setStyleFile(STYLE_FILE);
 
 		QtSingleApplication instance(argc, argv);
+		
 		if (instance.sendMessage(WAKE_MESSAGE))
 		{
 			onInstanceRunning();

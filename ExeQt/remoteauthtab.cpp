@@ -32,9 +32,13 @@ RemoteAuthTab::~RemoteAuthTab()
 void RemoteAuthTab::setupUI()
 {
 	if (m_AccesType == AccessType::ACCESSES_THIS)
+	{
 		ui->btnMainAction->setText("Revoke");
+	}
 	else
+	{
 		ui->btnMainAction->setText("Disconnect");
+	}
 
 	showClients();
 }
@@ -76,13 +80,17 @@ void RemoteAuthTab::showClients()
 	clearClients();
 
 	for (const Client& client : clients)
+	{
 		addClient(client);
+	}
 }
 
 void RemoteAuthTab::disconnectFromClient()
 {
 	if (!hasSelection())
+	{
 		return;
+	}
 
 	NetworkManager::instance()->disconnectFrom(m_Clients.at(getSelectedRow()));
 }
@@ -90,7 +98,9 @@ void RemoteAuthTab::disconnectFromClient()
 void RemoteAuthTab::revokeRight()
 {
 	if (!hasSelection())
+	{
 		return;
+	}
 
 	NetworkManager::instance()->closeClientConnection(m_Clients.at(getSelectedRow()));
 }
@@ -98,9 +108,13 @@ void RemoteAuthTab::revokeRight()
 void RemoteAuthTab::onMainAction()
 {
 	if (m_AccesType == AccessType::ACCESSES_THIS)
+	{
 		revokeRight();
+	}
 	else
+	{
 		disconnectFromClient();
+	}
 }
 
 void RemoteAuthTab::onConnectionsUpdated()

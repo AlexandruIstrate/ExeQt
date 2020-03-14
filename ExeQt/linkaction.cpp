@@ -43,7 +43,9 @@ QString LinkAction::getTagName() const
 bool LinkAction::checkBundle(const Bundle& bundle) const
 {
 	if (!Action::checkBundle(bundle))
+	{
 		return false;
+	}
 
 //	if (!checkProperty(bundle, LINK_PROPERTY))
 //		return false;
@@ -54,7 +56,9 @@ bool LinkAction::checkBundle(const Bundle& bundle) const
 void LinkAction::readProperties(Bundle& bundle)
 {
 	if (!checkBundle(bundle))
+	{
 		return;
+	}
 
 	m_Link = bundle.get(LINK_PROPERTY);
 	Action::readProperties(bundle);
@@ -81,11 +85,15 @@ void LinkAction::execute()
 bool LinkAction::validate()
 {
 	if (QUrl(m_Link).isValid())
+	{
 		return true;
+	}
 
 	QMessageBox dialog(QMessageBox::Icon::Question, tr("Invalid Link"), tr("The link you supplied is invalid and it might not work. Are you sure you want to use it?"), QMessageBox::Yes | QMessageBox::No);
 	if (dialog.exec() == QMessageBox::Yes)
+	{
 		return true;
+	}
 
 	return false;
 }

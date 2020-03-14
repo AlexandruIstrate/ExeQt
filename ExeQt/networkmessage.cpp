@@ -18,7 +18,6 @@
 
 NetworkMessage::NetworkMessage(const QString& appIdentifier) : m_AppIdentifier { appIdentifier }, m_HasError { false }
 {
-
 }
 
 NetworkMessage::NetworkMessage(const QString& appIdentifier, const QString& json) : m_AppIdentifier { appIdentifier }, m_HasError { false }
@@ -52,7 +51,9 @@ QString NetworkMessage::buildMessage() const
 	obj.insert(JSON_KEY_IDENTIFIER, m_AppIdentifier);
 
 	for (QMap<QString, QString>::const_iterator iter = m_Properties.constBegin(); iter != m_Properties.constEnd(); ++iter)
+	{
 		obj.insert(iter.key(), iter.value());
+	}
 
 	return QJsonDocument(obj).toJson(QJsonDocument::Compact).append(MESSAGE_END_CHARACTER);
 }
@@ -60,8 +61,11 @@ QString NetworkMessage::buildMessage() const
 void NetworkMessage::parseJson(const QString& json)
 {
 	QString stripped = json;
+
 	if (stripped.endsWith(MESSAGE_END_CHARACTER))
+	{
 		stripped.remove(json.length() - 1, 1);
+	}
 
 	QJsonDocument doc = QJsonDocument::fromJson(stripped.toUtf8());
 	QJsonObject object = doc.object();
@@ -76,7 +80,9 @@ void NetworkMessage::parseJson(const QString& json)
 	for (QJsonObject::const_iterator iter = object.constBegin(); iter != object.constEnd(); ++iter)
 	{
 		if (iter.key() == JSON_KEY_IDENTIFIER)
+		{
 			continue;
+		}
 
 		m_Properties.insert(iter.key(), iter.value().toString());
 	}

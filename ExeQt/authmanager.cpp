@@ -127,7 +127,9 @@ bool AuthManager::parseSyncActions(const QString& jsonText, QString* outMessage)
 		if (md.exec() == QDialog::DialogCode::Rejected)
 		{
 			if (outMessage)
+			{
 				*outMessage = message;
+			}
 
 			return false;
 		}
@@ -143,7 +145,9 @@ bool AuthManager::parseSyncActions(const QString& jsonText, QString* outMessage)
 	}
 
 	if (outMessage)
+	{
 		*outMessage = message;
+	}
 
 	return true;
 }

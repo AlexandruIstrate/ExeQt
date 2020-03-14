@@ -53,7 +53,9 @@ void RemoteControl::addTab(Client& client)
 void RemoteControl::addTabs()
 {
 	for (Client& client : NetworkManager::instance()->getConnectedToClients())
+	{
 		addTab(client);
+	}
 }
 
 void RemoteControl::clearTabs()

@@ -92,7 +92,9 @@ void SettingsDialog::onBrowse()
 	dialog.setFileMode(QFileDialog::FileMode::AnyFile);
 
 	if (dialog.exec() == QDialog::DialogCode::Rejected)
+	{
 		return;
+	}
 
 	ui->edtSavePath->setText(dialog.selectedFiles().at(0));
 }

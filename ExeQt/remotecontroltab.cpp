@@ -63,15 +63,23 @@ void RemoteControlTab::clearTree()
 void RemoteControlTab::onRun()
 {
 	TreeItem* treeItem = dynamic_cast<TreeItem*>(m_ActionTree.currentItem());
+
 	if (!treeItem)
+	{
 		return;
+	}
 
 	if (treeItem->getType() != TreeItem::Type::ACTION && treeItem->getType() != TreeItem::Type::ACTION_REFERENCE)
+	{
 		return;
+	}
 
 	ActionReference* ref = treeItem->getActionReference();
+
 	if (!ref)
+	{
 		return;
+	}
 
 	m_Client.callAction(*ref);
 	m_ActionTree.expandItem(treeItem);

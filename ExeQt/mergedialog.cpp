@@ -89,7 +89,11 @@ void MergeDialog::onDeny()
 void MergeDialog::onShowMergeChanged(bool checked)
 {
 	if (checked)
+	{
 		showMerged();
+	}
 	else
+	{
 		showLocalAndCloud();
+	}
 }

@@ -52,7 +52,9 @@ AppIcon AddGroupDialog::getIcon()
 void AddGroupDialog::initIcons()
 {
 	for (const QString& name : s_IconNames)
+	{
 		s_Icons.push_back(QIcon(QString(":/assets/images/group-icons/512") + name + QString(".png")));
+	}
 }
 
 void AddGroupDialog::addIcon(const QIcon& icon)
@@ -63,11 +65,17 @@ void AddGroupDialog::addIcon(const QIcon& icon)
 QString AddGroupDialog::getIconName(const AppIcon& icon)
 {
 	if (s_Icons.size() == 0)
+	{
 		initIcons();
+	}
 
 	for (const QString& iconName : s_IconNames)
+	{
 		if (icon.name == iconName)
+		{
 			return iconName;
+		}
+	}
 
 	return QString();
 }
@@ -75,11 +83,17 @@ QString AddGroupDialog::getIconName(const AppIcon& icon)
 AppIcon AddGroupDialog::getIconByName(const QString& name)
 {
 	if (s_Icons.size() == 0)
+	{
 		initIcons();
+	}
 
 	for (int i = 0; i < s_IconNames.size(); ++i)
+	{
 		if (name == s_IconNames[i])
+		{
 			return AppIcon(s_Icons[i], name);
+		}
+	}
 
 	return AppIcon(s_Icons[0], name);
 }
@@ -104,7 +118,9 @@ void AddGroupDialog::addIcon(const QIcon& icon, const QString& name)
 void AddGroupDialog::setupIcons()
 {
 	for (const QString& name : s_IconNames)
+	{
 		addIcon(QIcon(QString(IMAGE_ASSET_RES) + name + QString(".png")), name);
+	}
 }
 
 void AddGroupDialog::accept()

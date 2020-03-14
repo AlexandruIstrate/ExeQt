@@ -62,7 +62,9 @@ void MainPage::onSync()
 	LoginDialog logDialog(this);
 
 	if (logDialog.exec() != QDialog::DialogCode::Accepted)
+	{
 		return;
+	}
 
 	onContinue();
 }
